@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
         answerInput.value = '';
         answerInput.disabled = false;
         submitButton.disabled = false;
-        answerInput.focus();
+        // answerInput.focus();
 
         updatePracticeUI(); // Update titles, stats etc.
         startTime = performance.now(); // Record start time
