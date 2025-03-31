@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia - Aprendendo Adição</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Home Screen -->
+    <div id="home-screen" class="container screen active">
+        <header>
+            <h1>Guide</h1>
+            <p class="subtitle">Sua Jornada na Matemática!</p>
+        </header>
+        <main>
+            <div class="progress-overview">
+                <h2>Seu Progresso</h2>
+                <p>Nível Atual: <strong id="home-current-level">A1</strong></p>
+                <p>Próximo Nível: <strong id="home-next-level">Adição +2</strong></p>
+                <h3>Níveis Completos:</h3>
+                <ul id="completed-levels-list">
+                    <!-- Completed levels will be listed here -->
+                    <li>Nenhum ainda!</li>
+                </ul>
+            </div>
+            <button id="start-practice-button" class="button-cta large">Começar a Praticar!</button>
+        </main>
+        <footer>
+            <p>Guide - Aprenda Matemática</p>
+        </footer>
+    </div>
+
+    <!-- Practice Screen -->
+    <div id="practice-screen" class="container screen">
+        <header>
+            <h1 id="practice-level-title">Nível A1: Adição +1</h1>
+            <button id="back-to-home-button" class="button-secondary small">Voltar</button>
+        </header>
+
+        <main>
+            <div class="problem-container">
+                <div class="problem-box">
+                    <span class="instruction">Calcule</span>
+                    <span id="operand1" class="number-bubble">?</span>
+                    <span class="operator">+</span>
+                    <span id="operand2" class="number-bubble">?</span>
+                    <span class="operator">=</span>
+                    <input type="number" id="answer-input" inputmode="numeric" placeholder="?" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="stats-container">
+                 <!-- Only Progress Bar and Time Feedback -->
+                <div class="progress-bar-container">
+                     <div id="progress-bar" class="progress-bar-inner"></div>
+                </div>
+                <p id="last-answer-time" class="time-feedback"></p>
+            </div>
+
+            <!-- Numeric Keypad -->
+            <div id="keypad" class="keypad-container">
+                <button type="button" class="keypad-button" data-value="7">7</button>
+                <button type="button" class="keypad-button" data-value="8">8</button>
+                <button type="button" class="keypad-button" data-value="9">9</button>
+                <button type="button" class="keypad-button" data-value="4">4</button>
+                <button type="button" class="keypad-button" data-value="5">5</button>
+                <button type="button" class="keypad-button" data-value="6">6</button>
+                <button type="button" class="keypad-button" data-value="1">1</button>
+                <button type="button" class="keypad-button" data-value="2">2</button>
+                <button type="button" class="keypad-button" data-value="3">3</button>
+                <button type="button" class="keypad-button keypad-button-utility" data-value="clear">C</button>
+                <button type="button" class="keypad-button" data-value="0">0</button>
+                <button type="button" class="keypad-button keypad-button-utility" data-value="backspace">⌫</button>
+            </div>
+            <!-- End Keypad -->
+
+            <button id="submit-button" class="button-cta">Verificar</button>
+
+            <div id="feedback" class="feedback-message"></div>
+        </main>
+        <footer>
+            <p>Guide - Aprenda Matemática</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
