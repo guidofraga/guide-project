@@ -1,8 +1,8 @@
 
 {
-    "name": "Guia - Aprendendo Adição", 
-    "short_name": "Guia",             
-    "description": "Aprenda adição passo a passo de forma divertida!",
+    "name": "Guide - Aprendendo Matemática", 
+    "short_name": "Guide",             
+    "description": "Aprenda matemática passo a passo!",
     "start_url": ".",                 
     "scope": "/",                     
     "display": "standalone",          
