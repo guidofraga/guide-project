@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guia - Aprendendo Adição</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Guide - Aprendendo Matemática</title>
+    <link rel="stylesheet" href="public/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4A90E2">
     <!-- Optional: Apple-specific meta tags for icons and startup image -->
-    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="public/images/icons/icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Or 'default', 'black' -->
     <meta name="apple-mobile-web-app-title" content="Guia">
@@ -25,17 +25,11 @@
             <p class="subtitle">Sua Jornada na Matemática!</p>
         </header>
         <main>
-            <div class="progress-overview">
-                <h2>Seu Progresso</h2>
-                <p>Nível Atual: <strong id="home-current-level">A1</strong></p>
-                <p>Próximo Nível: <strong id="home-next-level">Adição +2</strong></p>
-                <h3>Níveis Completos:</h3>
-                <ul id="completed-levels-list">
-                    <!-- Completed levels will be listed here -->
-                    <li>Nenhum ainda!</li>
-                </ul>
+            <h2>Explorar Níveis</h2>
+            <div id="stage-selection-container">
+                <!-- Stage accordions will be dynamically inserted here by ui.js -->
             </div>
-            <button id="start-practice-button" class="button-cta large">Começar a Praticar!</button>
+            <button id="start-practice-button" class="button-cta large" style="margin-top: 20px;">Continuar Jornada</button>
         </main>
         <footer>
             <p>Guide - Aprenda Matemática</p>
@@ -45,14 +39,13 @@
     <!-- Practice Screen -->
     <div id="practice-screen" class="container screen">
         <header>
-            <h1 id="practice-level-title">Nível A1: Adição +1</h1>
             <button id="back-to-home-button" class="button-secondary small">Voltar</button>
+            <h1 id="practice-level-title">Nível A1</h1>
         </header>
 
         <main>
             <div class="problem-container">
                 <div class="problem-box">
-                    <span class="instruction">Calcule</span>
                     <span id="operand1" class="number-bubble">?</span>
                     <span class="operator">+</span>
                     <span id="operand2" class="number-bubble">?</span>
@@ -62,10 +55,11 @@
             </div>
 
             <div class="stats-container">
-                 <!-- Only Progress Bar and Time Feedback -->
+                <!-- Progress Bar for question tracking -->
                 <div class="progress-bar-container">
-                     <div id="progress-bar" class="progress-bar-inner"></div>
+                    <div id="progress-bar" class="progress-bar-inner"></div>
                 </div>
+                <!-- Time feedback for last answer -->
                 <p id="last-answer-time" class="time-feedback"></p>
             </div>
 
@@ -95,6 +89,28 @@
         </footer>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Level Complete Screen -->
+    <div id="level-complete-screen" class="container screen">
+        <header>
+            <h1 id="level-complete-title">Nível Completo!</h1>
+        </header>
+        <main>
+            <p class="congrats-message" id="level-complete-message">Parabéns! Você completou o nível <strong id="completed-level-name">[Level Name]</strong>!</p>
+            <div class="level-stats">
+                <p>Precisão: <strong id="level-accuracy-stat">-%</strong></p>
+                <p>Tempo Médio: <strong id="level-avg-time-stat">-s</strong></p>
+                <p id="level-new-stars-message" class="new-achievement-message"></p> <!-- Message for new stars -->
+            </div>
+            <div class="button-group">
+                <button id="continue-next-level-button" class="button-cta large">Próximo Nível</button>
+                <button id="go-home-button" class="button-secondary large">Voltar ao Início</button>
+            </div>
+        </main>
+        <footer>
+            <p>Guide - Aprenda Matemática</p>
+        </footer>
+    </div>
+
+    <script type="module" src="src/js/main.js"></script>
 </body>
 </html>

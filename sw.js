@@ -1,33 +1,36 @@
 // sw.js
 
-const CACHE_NAME = 'guia-cache-v1'; // Change version when you update assets
-const urlsToCache = [
-  '/', // Cache the root (often index.html)
-  '/index.html',
-  '/style.css',
-  '/script.js',
-  // Add paths to your specific icons used in manifest and meta tags
-  '/images/icons/icon-72x72.png',
-  '/images/icons/icon-96x96.png',
-  '/images/icons/icon-128x128.png',
-  '/images/icons/icon-144x144.png',
-  '/images/icons/icon-152x152.png',
-  '/images/icons/icon-192x192.png',
-  '/images/icons/icon-384x384.png',
-  '/images/icons/icon-512x512.png',
-  // Add other essential assets (fonts, maybe key sounds if preloaded)
-  'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap', // Cache font CSS
-  // Note: Caching external resources like Google Fonts requires careful handling
+const CACHE_NAME = 'guide-app-v1';
+const ASSETS = [
+  './',
+  './index.html',
+  './public/css/style.css',
+  './manifest.json',
+  './src/js/main.js',
+  './src/js/config/constants.js',
+  './src/js/core/gameLogic.js',
+  './src/js/core/levels.js',
+  './src/js/core/state.js',
+  './src/js/ui/domElements.js',
+  './src/js/ui/ui.js',
+  './src/js/utils/audio.js',
+  './src/js/utils/utils.js',
+  './public/images/icons/icon-72x72.png',
+  './public/images/icons/icon-96x96.png',
+  './public/images/icons/icon-144x144.png',
+  './public/images/icons/icon-192x192.png',
+  './public/images/icons/icon-512x512.png',
+  'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap',
 ];
 
-// Install event: Cache necessary assets
+// Install event - cache assets
 self.addEventListener('install', event => {
   console.log('Service Worker: Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Service Worker: Caching app shell');
-        return cache.addAll(urlsToCache);
+        return cache.addAll(ASSETS);
       })
       .then(() => {
         console.log('Service Worker: Installation complete');
@@ -39,18 +42,14 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate event: Clean up old caches
+// Activate event - clean up old caches
 self.addEventListener('activate', event => {
   console.log('Service Worker: Activating...');
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Service Worker: Clearing old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
+        cacheNames.filter(name => name !== CACHE_NAME)
+          .map(name => caches.delete(name))
       );
     }).then(() => {
        console.log('Service Worker: Activation complete');
@@ -59,41 +58,48 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch event: Serve cached assets first (Cache First Strategy)
+// Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', event => {
   // console.log('Service Worker: Fetching', event.request.url);
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Cache hit - return response
+        // Return the cached response if found
         if (response) {
           // console.log('Service Worker: Serving from cache:', event.request.url);
           return response;
         }
-        // Not in cache - fetch from network
-        // console.log('Service Worker: Fetching from network:', event.request.url);
-        return fetch(event.request).then(
-             // Optional: Cache the newly fetched resource dynamically
-             // Be careful with this - might cache unwanted things if not restricted
-             /*
-             (networkResponse) => {
-                if(!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-                    return networkResponse;
-                }
-                const responseToCache = networkResponse.clone();
-                caches.open(CACHE_NAME)
-                    .then(cache => {
-                        cache.put(event.request, responseToCache);
-                    });
-                return networkResponse;
-             }
-             */
-             networkResponse => networkResponse // Just return network response if not caching dynamically
-        ).catch(error => {
-            console.error('Service Worker: Fetch failed', error);
-            // Optional: Return a fallback offline page here if fetch fails
-            // return caches.match('/offline.html');
-        });
+        // Else fetch from network
+        return fetch(event.request)
+          .then(response => {
+            // Don't cache responses that aren't successful or from our origin
+            if (!response.ok || !event.request.url.startsWith(self.location.origin)) {
+              return response;
+            }
+            
+            // Clone the response to use it and cache it
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME)
+              .then(cache => {
+                cache.put(event.request, responseToCache);
+              });
+            
+            return response;
+          })
+          .catch(() => {
+            // If both cache and network fail, return a fallback for HTML files
+            if (event.request.headers.get('Accept').includes('text/html')) {
+              return caches.match('./index.html');
+            }
+            // Or return nothing for other types of requests
+            return new Response('Not available offline', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: new Headers({
+                'Content-Type': 'text/plain'
+              })
+            });
+          });
       })
   );
 });
