@@ -4,26 +4,29 @@ Guide is an interactive web-based educational application designed to help users
 
 ## Features
 
+- **Modern App-like Interface**: Redesigned UI with dashboard homepage, bottom navbar, and improved visual styling.
 - **Progressive Level System**: Levels grouped into stages (e.g., Stage A, Stage B).
-- **Stage Mastery Progress**: Visual progress bars show mastery for each stage.
-- **Accordion UI**: Stages are presented in collapsible accordions for a clean interface.
+- **Tabbed Exercise Categories**: Browse exercises by category (Addition, Subtraction) on a dedicated screen.
+- **Accordion UI**: Stages within categories are presented in collapsible accordions.
 - **Star-based Achievement System**: Earn up to 4 stars (including a crown) based on speed and accuracy.
-- **Responsive Interface**: Works on mobile devices with a touch-friendly keypad interface.
+- **Responsive & Ergonomic Practice Screen**: Touch-friendly fixed keypad (1-2-3 layout) with integrated check button.
+- **Detailed Level Completion Screen**: Full-screen view showing accuracy, average time, and earned stars, with social sharing options.
 - **Performance Tracking**: Track your progress across sessions with persistent storage.
-- **Immediate Feedback**: Get instant feedback on your answers with visual and audio cues.
-- **Level Selection Grid**: Easily navigate between levels within each stage.
-- **Offline Support**: Fully functional as a PWA for offline learning.
-- **UI Animations**: Smooth animations for accordion open/close and hover effects.
+- **Immediate Feedback**: Get instant feedback with visual cues, sound effects, and haptic feedback (on supported devices).
+- **Offline Support & Auto-Updates**: Fully functional as a PWA with improved caching and automatic updates.
+- **Gamification Elements**: Includes daily streak counter and placeholder for daily challenges.
 
 ## How to Use
 
-1. Open the application by accessing `index.html` in your browser or by deploying it to a static host (like GitHub Pages).
-2. On the home screen, click "Continuar Jornada" to start the recommended level.
-3. Alternatively, expand a stage accordion to view its levels.
-4. Select a specific level from the grid by clicking "Praticar".
-5. Practice by entering answers to the addition problems.
-6. Complete the session to see your score and earn stars.
-7. Progress through all levels to master addition fundamentals.
+1.  Open the application by accessing `index.html` in your browser or by deploying it to a static host (like GitHub Pages).
+2.  **Homepage**: View your progress summary, streak, and access different sections.
+    *   Click "Continuar" on the Quick Resume card to start the next recommended level.
+    *   Tap category cards (e.g., "Adição") to browse specific exercises.
+    *   Use the bottom navbar to navigate between Home, Exercises, Stats (coming soon), and Settings (coming soon).
+3.  **Exercises Screen**: Select a category tab (e.g., "Adição"). Expand a stage accordion to view its levels. Click "Praticar" on a level card.
+4.  **Practice Screen**: Enter answers to the addition problems using the fixed keypad at the bottom. Click the integrated "Verificar" button.
+5.  **Level Complete Screen**: Review your accuracy, average time, and earned stars. Choose to continue to the next level or return home.
+6.  Progress through all levels to master addition fundamentals.
 
 ## Development Information
 
@@ -31,11 +34,10 @@ Guide is an interactive web-based educational application designed to help users
 
 - Pure JavaScript (ES6+)
 - HTML5 & CSS3
-- Progressive Web App (PWA) features
+- Progressive Web App (PWA) features (Service Worker, Manifest)
+- FontAwesome for icons
 
 ### Project Structure
-
-The project is structured for better organization and maintainability:
 
 ```
 guide/
@@ -58,13 +60,14 @@ guide/
 │       │   └── ui.js       # UI manipulation
 │       └── utils/          # Utilities
 │           ├── audio.js    # Sound effects
-│           └── utils.js    # Helper functions
+│           └── utils.js    # Helper functions (incl. haptics, throttle)
 │   └── tests/              # (Placeholder for future tests)
 ├── index.html              # Main application HTML (entry point)
 ├── manifest.json           # PWA manifest
-├── sw.js                   # Service worker for offline functionality
+├── sw.js                   # Service worker for offline functionality & caching
 ├── 404.html                # Basic 404 page (useful for some hosting)
-└── README.md               # Project documentation
+├── README.md               # Project documentation
+└── roadmap.md              # Development roadmap
 ```
 
 ## Deployment (e.g., GitHub Pages)
@@ -85,11 +88,7 @@ guide/
 
 ## Future Development Ideas
 
-- Add multiplication and division levels.
-- Include more gamification elements.
-- Develop a statistics dashboard to track progress over time.
-- Add timed challenge modes.
-- Support for multiple users/profiles.
+See `roadmap.md` for detailed future plans.
 
 ## License
 

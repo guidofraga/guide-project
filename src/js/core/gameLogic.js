@@ -1,7 +1,7 @@
 // Import dependencies
 import state, { saveState } from './state.js';
 import { levels } from './levels.js';
-import { getPairingKey, shuffleArray } from '../utils/utils.js';
+import { getPairingKey, shuffleArray, triggerHapticFeedback } from '../utils/utils.js';
 import {
     DEFAULT_TIME_THRESHOLD_MS,
     QUESTIONS_PER_SESSION,
@@ -117,7 +117,6 @@ export function generateProblem() {
 
 export function checkAnswer() {
     const questionEndTime = performance.now();
-    // const timeTaken = questionEndTime - state.questionStartTime; // Individual time, not used for stars
     const userAnswer = parseInt(dom.answerInput.value, 10);
 
     dom.answerInput.disabled = true;
@@ -130,20 +129,23 @@ export function checkAnswer() {
     if (isCorrect) {
         state.sessionCorrectAnswers++;
         playSound('correct');
-        showFeedback("Correto!", 'correct', '', ''); // Simple feedback for now
+        triggerHapticFeedback('CORRECT'); // Haptic feedback for correct answer
+        showFeedback("Correto!", 'correct', '', ''); 
     } else {
         playSound('wrong');
+        triggerHapticFeedback('INCORRECT'); // Haptic feedback for incorrect answer
         showFeedback(`Incorreto. A resposta era ${state.currentCorrectAnswer}.`, 'incorrect', '', '');
     }
 
     // Check for session completion
     if (state.sessionQuestionsAnswered >= state.sessionPairings.length) {
-        playSound('levelup'); // Use levelup sound for session complete
+        playSound('levelup'); 
+        // Level complete haptic is handled in showLevelCompleteScreen
         calculateAndShowResults();
     } else {
         // Move to next question
         state.sessionCurrentIndex++;
-        setTimeout(generateProblem, 1200); // Shorter delay between questions?
+        setTimeout(generateProblem, 1200); 
     }
 }
 

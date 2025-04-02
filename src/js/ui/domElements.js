@@ -1,13 +1,37 @@
 export const homeScreen = document.getElementById('home-screen');
 export const practiceScreen = document.getElementById('practice-screen');
+export const exercisesScreen = document.getElementById('exercises-screen'); // New exercises screen
 // Remove old home progress elements
 // export const homeCurrentLevelEl = document.getElementById('home-current-level');
 // export const homeNextLevelEl = document.getElementById('home-next-level');
 // export const completedLevelsListEl = document.getElementById('completed-levels-list');
-export const stageSelectionContainerEl = document.getElementById('stage-selection-container'); // NEW container
+export const stageSelectionContainerEl = document.getElementById('stage-selection-container'); // Original (to be removed/replaced)
 export const startPracticeButton = document.getElementById('start-practice-button');
 export const backToHomeButton = document.getElementById('back-to-home-button');
 
+// New UI Elements - Home screen
+export const userNameEl = document.getElementById('user-name');
+export const currentStreakEl = document.getElementById('current-streak');
+export const profileButton = document.getElementById('profile-button');
+export const lastLevelPlayedEl = document.getElementById('last-level-played');
+export const overallProgressEl = document.getElementById('overall-progress');
+export const progressPercentageEl = document.getElementById('progress-percentage');
+export const additionCategoryEl = document.getElementById('addition-category');
+export const subtractionCategoryEl = document.getElementById('subtraction-category');
+export const additionProgressEl = document.getElementById('addition-progress');
+export const subtractionProgressEl = document.getElementById('subtraction-progress');
+
+// Navigation Elements
+export const bottomNavItems = document.querySelectorAll('.nav-item');
+export const allExercisesButton = document.getElementById('all-exercises-button');
+
+// Exercises Screen Elements
+export const tabButtons = document.querySelectorAll('.tab-button');
+export const tabContents = document.querySelectorAll('.tab-content');
+export const additionStagesContainer = document.getElementById('addition-stages-container');
+export const subtractionStagesContainer = document.getElementById('subtraction-stages-container');
+
+// Practice Screen Elements
 export const practiceLevelTitleEl = document.getElementById('practice-level-title');
 export const operand1El = document.getElementById('operand1');
 export const operand2El = document.getElementById('operand2');
@@ -24,6 +48,7 @@ export const completedLevelNameEl = document.getElementById('completed-level-nam
 export const levelCompleteMessageEl = document.getElementById('level-complete-message');
 export const levelAccuracyStatEl = document.getElementById('level-accuracy-stat');
 export const levelAvgTimeStatEl = document.getElementById('level-avg-time-stat');
+export const earnedStarsEl = document.getElementById('earned-stars');
 export const levelNewStarsMessageEl = document.getElementById('level-new-stars-message');
 export const continueNextLevelButton = document.getElementById('continue-next-level-button');
-export const goHomeButton = document.getElementById('go-home-button'); // Button on level complete screen 
+export const goHomeButton = document.getElementById('go-home-button');

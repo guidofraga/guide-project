@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Cache control meta tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Guide - Aprendendo Matemática</title>
     <link rel="stylesheet" href="public/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4A90E2">
     <!-- Optional: Apple-specific meta tags for icons and startup image -->
@@ -20,30 +26,163 @@
 
     <!-- Home Screen -->
     <div id="home-screen" class="container screen active">
+        <!-- App content container -->
+        <div class="app-container">
+            <!-- Welcome section with avatar/profile link -->
+            <header class="home-header">
+                <div class="welcome-container">
+                    <div class="welcome-text">
+                        <h2>Olá, <span id="user-name">Estudante</span>!</h2>
+                        <p class="streak-counter"><i class="fas fa-fire"></i> <span id="current-streak">0</span> dias consecutivos</p>
+                    </div>
+                    <div class="profile-link">
+                        <a href="#profile" id="profile-button"><i class="fas fa-user-circle"></i></a>
+                    </div>
+                </div>
+            </header>
+
+            <main class="home-main">
+                <!-- Quick resume card -->
+                <div class="quick-resume-card">
+                    <div class="resume-info">
+                        <h3>Continue sua jornada</h3>
+                        <p>Último nível: <span id="last-level-played">A4</span></p>
+                        <div class="progress-indicator">
+                            <div class="progress-bar">
+                                <div id="overall-progress" class="progress-fill" style="width: 45%"></div>
+                            </div>
+                            <span id="progress-percentage">45% concluído</span>
+                        </div>
+                    </div>
+                    <button id="start-practice-button" class="button-cta pulse-animation">
+                        <i class="fas fa-play"></i> Continuar
+                    </button>
+                </div>
+
+                <!-- Categories section -->
+                <div class="categories-section">
+                    <h3>Categorias</h3>
+                    <div class="category-cards">
+                        <div class="category-card" id="addition-category">
+                            <div class="category-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <h4>Adição</h4>
+                            <div class="category-progress">
+                                <div class="progress-bar">
+                                    <div id="addition-progress" class="progress-fill" style="width: 60%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="category-card" id="subtraction-category">
+                            <div class="category-icon">
+                                <i class="fas fa-minus"></i>
+                            </div>
+                            <h4>Subtração</h4>
+                            <div class="category-progress">
+                                <div class="progress-bar">
+                                    <div id="subtraction-progress" class="progress-fill" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily challenge card -->
+                <div class="daily-challenge-card">
+                    <div class="challenge-info">
+                        <div class="challenge-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="challenge-text">
+                            <h3>Desafio Diário</h3>
+                            <p>Complete 10 problemas em menos de 30 segundos</p>
+                        </div>
+                    </div>
+                    <button class="button-secondary">
+                        <i class="fas fa-bolt"></i> Iniciar
+                    </button>
+                </div>
+            </main>
+            
+            <!-- Bottom Navigation Bar -->
+            <nav class="bottom-navbar">
+                <a href="#home" class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Início</span>
+                </a>
+                <a href="#exercises" class="nav-item" id="all-exercises-button">
+                    <i class="fas fa-list-check"></i>
+                    <span>Exercícios</span>
+                </a>
+                <a href="#stats" class="nav-item">
+                    <i class="fas fa-chart-simple"></i>
+                    <span>Estatísticas</span>
+                </a>
+                <a href="#settings" class="nav-item">
+                    <i class="fas fa-gear"></i>
+                    <span>Ajustes</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- All Exercises Screen (new) -->
+    <div id="exercises-screen" class="container screen">
         <header>
-            <h1>Guide</h1>
-            <p class="subtitle">Sua Jornada na Matemática!</p>
+            <h1>Todos os Exercícios</h1>
         </header>
         <main>
-            <h2>Explorar Níveis</h2>
-            <div id="stage-selection-container">
-                <!-- Stage accordions will be dynamically inserted here by ui.js -->
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <button class="tab-button active" data-tab="addition">Adição</button>
+                    <button class="tab-button" data-tab="subtraction">Subtração</button>
+                </div>
+                <div class="tabs-content">
+                    <div id="addition-tab" class="tab-content active">
+                        <div id="addition-stages-container" class="stage-selection-container">
+                            <!-- Addition accordions will be dynamically inserted here by ui.js -->
+                        </div>
+                    </div>
+                    <div id="subtraction-tab" class="tab-content">
+                        <div id="subtraction-stages-container" class="stage-selection-container">
+                            <!-- Subtraction accordions will be dynamically inserted here by ui.js -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button id="start-practice-button" class="button-cta large" style="margin-top: 20px;">Continuar Jornada</button>
         </main>
-        <footer>
-            <p>Guide - Aprenda Matemática</p>
-        </footer>
+        <nav class="bottom-navbar">
+            <a href="#home" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Início</span>
+            </a>
+            <a href="#exercises" class="nav-item active">
+                <i class="fas fa-list-check"></i>
+                <span>Exercícios</span>
+            </a>
+            <a href="#stats" class="nav-item">
+                <i class="fas fa-chart-simple"></i>
+                <span>Estatísticas</span>
+            </a>
+            <a href="#settings" class="nav-item">
+                <i class="fas fa-gear"></i>
+                <span>Ajustes</span>
+            </a>
+        </nav>
     </div>
 
     <!-- Practice Screen -->
     <div id="practice-screen" class="container screen">
         <header>
-            <button id="back-to-home-button" class="button-secondary small">Voltar</button>
+            <button id="back-to-home-button" class="button-secondary small">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
             <h1 id="practice-level-title">Nível A1</h1>
         </header>
 
-        <main>
+        <main class="practice-main">
             <div class="problem-container">
                 <div class="problem-box">
                     <span id="operand1" class="number-bubble">?</span>
@@ -65,50 +204,86 @@
 
             <!-- Numeric Keypad -->
             <div id="keypad" class="keypad-container">
-                <button type="button" class="keypad-button" data-value="7">7</button>
-                <button type="button" class="keypad-button" data-value="8">8</button>
-                <button type="button" class="keypad-button" data-value="9">9</button>
-                <button type="button" class="keypad-button" data-value="4">4</button>
-                <button type="button" class="keypad-button" data-value="5">5</button>
-                <button type="button" class="keypad-button" data-value="6">6</button>
                 <button type="button" class="keypad-button" data-value="1">1</button>
                 <button type="button" class="keypad-button" data-value="2">2</button>
                 <button type="button" class="keypad-button" data-value="3">3</button>
+                <button type="button" class="keypad-button" data-value="4">4</button>
+                <button type="button" class="keypad-button" data-value="5">5</button>
+                <button type="button" class="keypad-button" data-value="6">6</button>
+                <button type="button" class="keypad-button" data-value="7">7</button>
+                <button type="button" class="keypad-button" data-value="8">8</button>
+                <button type="button" class="keypad-button" data-value="9">9</button>
                 <button type="button" class="keypad-button keypad-button-utility" data-value="clear">C</button>
                 <button type="button" class="keypad-button" data-value="0">0</button>
                 <button type="button" class="keypad-button keypad-button-utility" data-value="backspace">⌫</button>
+                <button id="submit-button" class="button-cta keypad-submit-button">
+                    <i class="fas fa-check"></i> Verificar
+                </button>
             </div>
             <!-- End Keypad -->
 
-            <button id="submit-button" class="button-cta">Verificar</button>
-
             <div id="feedback" class="feedback-message"></div>
         </main>
-        <footer>
-            <p>Guide - Aprenda Matemática</p>
-        </footer>
     </div>
 
     <!-- Level Complete Screen -->
     <div id="level-complete-screen" class="container screen">
-        <header>
-            <h1 id="level-complete-title">Nível Completo!</h1>
-        </header>
-        <main>
-            <p class="congrats-message" id="level-complete-message">Parabéns! Você completou o nível <strong id="completed-level-name">[Level Name]</strong>!</p>
-            <div class="level-stats">
-                <p>Precisão: <strong id="level-accuracy-stat">-%</strong></p>
-                <p>Tempo Médio: <strong id="level-avg-time-stat">-s</strong></p>
-                <p id="level-new-stars-message" class="new-achievement-message"></p> <!-- Message for new stars -->
+        <div class="app-container level-complete-container">
+            <div class="level-header">
+                <div class="celebration-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h2 id="level-complete-title">Nível Completo!</h2>
+                <p class="congrats-message" id="level-complete-message">Parabéns! Você completou o nível <strong id="completed-level-name">[Level Name]</strong>!</p>
             </div>
+            
+            <div class="results-container">
+                <h3>Seus resultados</h3>
+                
+                <div class="level-stats">
+                    <div class="stat-box">
+                        <i class="fas fa-bullseye"></i>
+                        <div class="stat-info">
+                            <p>Precisão:</p>
+                            <strong id="level-accuracy-stat">-%</strong>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-stopwatch"></i>
+                        <div class="stat-info">
+                            <p>Tempo Médio:</p>
+                            <strong id="level-avg-time-stat">-s</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stars-section">
+                    <h4>Suas estrelas</h4>
+                    <div class="stars-container" id="earned-stars">
+                        <!-- Stars will be dynamically inserted -->
+                    </div>
+                    <p id="level-new-stars-message" class="new-achievement-message"></p>
+                </div>
+            </div>
+            
             <div class="button-group">
-                <button id="continue-next-level-button" class="button-cta large">Próximo Nível</button>
-                <button id="go-home-button" class="button-secondary large">Voltar ao Início</button>
+                <button id="continue-next-level-button" class="button-cta large">
+                    <i class="fas fa-forward"></i> Próximo Nível
+                </button>
+                <button id="go-home-button" class="button-secondary large">
+                    <i class="fas fa-home"></i> Voltar ao Início
+                </button>
             </div>
-        </main>
-        <footer>
-            <p>Guide - Aprenda Matemática</p>
-        </footer>
+            
+            <div class="share-section">
+                <p>Compartilhe sua conquista!</p>
+                <div class="share-buttons">
+                    <button class="share-button"><i class="fab fa-whatsapp"></i></button>
+                    <button class="share-button"><i class="fab fa-facebook"></i></button>
+                    <button class="share-button"><i class="fab fa-twitter"></i></button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="src/js/main.js"></script>

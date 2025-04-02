@@ -9,10 +9,14 @@
     --bubble-bg: #ffffff;
     --bubble-shadow: rgba(0, 0, 0, 0.1);
     --font-family: 'Nunito', sans-serif;
+    --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    --navbar-height: 60px;
+    --navbar-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 
     /* Responsive Font Sizes */
     --font-size-h1: clamp(2.2rem, 5vw + 1rem, 3rem); /* Min, Preferred, Max */
     --font-size-h2: clamp(1.2rem, 3vw + 0.5rem, 1.4rem);
+    --font-size-h3: clamp(1.1rem, 2.5vw + 0.4rem, 1.3rem);
     --font-size-problem: clamp(2rem, 6vw + 0.5rem, 2.8rem);
     --font-size-input: clamp(1.8rem, 5vw + 0.5rem, 2.5rem);
     --font-size-button-cta: clamp(1.1rem, 2vw + 0.5rem, 1.3rem);
@@ -43,23 +47,36 @@ body {
     justify-content: center;
     align-items: flex-start; /* Align top for shorter content */
     min-height: 100vh;
-    padding: 20px;
+    padding: 0;
+    margin: 0;
 }
 
 /* --- Layout & Container --- */
 .container {
     background-color: #ffffff;
-    padding: var(--padding-container);
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     max-width: 500px;
     width: 100%;
+    min-height: 100vh;
     text-align: center;
-    margin: 20px; /* Add some margin for very small screens */
+    margin: 0;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
 }
 
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-bottom: var(--navbar-height);
+}
+
+/* --- Header Styles --- */
 header {
-    margin-bottom: clamp(20px, 5vw, 30px);
+    padding: 20px var(--padding-container) 10px;
+    margin-bottom: 0;
+    position: relative;
 }
 
 header h1 {
@@ -69,90 +86,605 @@ header h1 {
     margin-bottom: 5px;
 }
 
-#level-display {
+.home-header {
+    padding: 25px var(--padding-container) 15px;
+}
+
+.welcome-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+}
+
+.welcome-text h2 {
+    font-size: var(--font-size-h2);
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.streak-counter {
+    font-size: var(--font-size-base);
     color: var(--secondary-color);
-    font-size: 1.2em;
-    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-/* --- Problem Area --- */
-.problem-container {
-    position: relative;
-    background-color: var(--background-light);
-    border-radius: 15px;
-    padding: var(--padding-problem);
-    margin-bottom: clamp(20px, 5vw, 30px);
-    overflow: hidden; /* Contain shapes if needed */
+.streak-counter i {
+    color: var(--secondary-color);
 }
 
-/* Optional: Add background shapes here */
-#shapes-background {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    /* Example: You could use pseudo-elements or SVGs */
-    /* background: url('path/to/shapes.svg') no-repeat center center / cover; */
-    opacity: 0.1;
-    z-index: 0;
+.profile-link a {
+    color: var(--primary-color);
+    font-size: 2rem;
+    text-decoration: none;
+    transition: transform 0.2s ease;
 }
 
+.profile-link a:hover {
+    transform: scale(1.1);
+}
 
-.problem-box {
-    position: relative; /* Stay above shapes */
-    z-index: 1;
+/* --- Main Content --- */
+.home-main {
+    flex: 1;
+    padding: 0 var(--padding-container);
+    overflow-y: auto;
+}
+
+/* Quick Resume Card */
+.quick-resume-card {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2D72C7 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: var(--card-shadow);
+}
+
+.resume-info h3 {
+    font-size: var(--font-size-h3);
+    margin-bottom: 10px;
+}
+
+.resume-info p {
+    font-size: var(--font-size-base);
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.progress-indicator {
+    margin-top: 10px;
+}
+
+.progress-bar {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill {
+    background-color: white;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+#progress-percentage {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Categories Section */
+.categories-section {
+    margin: 25px 0;
+}
+
+.categories-section h3 {
+    font-size: var(--font-size-h3);
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.category-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.category-card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 20px 15px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.category-card:hover {
+    transform: translateY(-3px);
+}
+
+.category-icon {
+    background-color: rgba(74, 144, 226, 0.1);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: clamp(10px, 2vw, 15px); /* Spacing between elements */
-    font-size: var(--font-size-problem);
-    font-weight: 700;
+    margin: 0 auto 15px;
 }
 
-.number-bubble {
-    background-color: var(--bubble-bg);
-    padding: clamp(8px, 2vw, 10px) clamp(15px, 4vw, 20px);
-    border-radius: 50px; /* Make it pill-shaped or circular */
-    min-width: clamp(60px, 15vw, 80px); /* Ensure size consistency */
-    display: inline-block;
-    box-shadow: 0 4px 10px var(--bubble-shadow);
+.category-icon i {
+    font-size: 1.5rem;
     color: var(--primary-color);
-    transition: transform 0.2s ease;
-}
-.number-bubble:hover {
-    transform: scale(1.05);
 }
 
+#addition-category .category-icon {
+    background-color: rgba(74, 144, 226, 0.1);
+}
 
-.operator {
+#addition-category .category-icon i {
+    color: var(--primary-color);
+}
+
+#subtraction-category .category-icon {
+    background-color: rgba(245, 166, 35, 0.1);
+}
+
+#subtraction-category .category-icon i {
     color: var(--secondary-color);
 }
 
-#answer-input {
+.category-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.category-progress .progress-bar {
+    background-color: #eee;
+    margin-top: 10px;
+}
+
+#addition-progress {
+    background-color: var(--primary-color);
+}
+
+#subtraction-progress {
+    background-color: var(--secondary-color);
+}
+
+/* Daily Challenge Card */
+.daily-challenge-card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 25px 0;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.challenge-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+}
+
+.challenge-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(245, 166, 35, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.challenge-icon i {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+}
+
+.challenge-text h3 {
+    font-size: 1.1rem;
+    margin-bottom: 3px;
+}
+
+.challenge-text p {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Bottom Navigation Bar */
+.bottom-navbar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 500px;
+    height: var(--navbar-height);
+    background-color: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: var(--navbar-shadow);
+    z-index: 100;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    text-decoration: none;
+    flex: 1;
+    padding: 10px 0;
+    transition: color 0.2s ease;
+}
+
+.nav-item i {
+    font-size: 1.4rem;
+    margin-bottom: 5px;
+}
+
+.nav-item span {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.nav-item.active {
+    color: var(--primary-color);
+}
+
+.nav-item:hover {
+    color: var(--primary-color);
+}
+
+/* Exercises Screen */
+.tabs-container {
+    margin-top: 20px;
+    padding: 0 var(--padding-container);
+}
+
+.tabs-header {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+}
+
+.tabs-header::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+
+.tab-button {
+    padding: 12px 20px;
+    background: none;
+    border: none;
     font-family: var(--font-family);
-    font-weight: 700;
-    font-size: var(--font-size-input); /* Use fluid size */
-    width: clamp(80px, 20vw, 100px); /* Adjust as needed */
-    padding: clamp(10px, 2.5vw, 15px) clamp(8px, 2vw, 10px);
-    border: 2px solid var(--primary-color);
-    border-radius: 10px;
+    font-weight: 600;
+    font-size: var(--font-size-base);
+    color: #999;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+}
+
+.tab-button.active {
+    color: var(--primary-color);
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 3px 3px 0 0;
+}
+
+.tab-content {
+    display: none;
+    padding-bottom: 20px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.stage-selection-container {
+    margin-bottom: 30px;
+}
+
+/* Animations */
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(74, 144, 226, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 144, 226, 0);
+  }
+}
+
+/* --- Level Complete Screen --- */
+#level-complete-screen .level-complete-container {
+    padding: 20px var(--padding-container) var(--navbar-height); /* Add bottom padding for navbar */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+.level-header {
     text-align: center;
-    outline: none;
-    transition: border-color 0.3s ease;
-}
-#answer-input:focus {
-    border-color: var(--secondary-color);
-}
-/* Hide number input spinners */
-#answer-input::-webkit-outer-spin-button,
-#answer-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-#answer-input[type=number] {
-  -moz-appearance: textfield; /* Firefox */
+    margin-bottom: 20px;
+    width: 100%;
 }
 
+.level-header .celebration-icon {
+    background-color: rgba(245, 166, 35, 0.1);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+    animation: bounceIn 0.8s;
+}
 
-/* --- Button --- */
+.level-header .celebration-icon i {
+    font-size: 2.2rem;
+    color: var(--secondary-color);
+}
+
+.level-header h2 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.level-header .congrats-message {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.results-container {
+    background-color: var(--background-light);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.results-container h3 {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.results-container h4 {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.level-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Make columns flexible */
+    gap: 15px; /* Add gap */
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* Removed fixed width */
+}
+
+.stat-box i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.stat-info {
+    text-align: left;
+}
+
+.stat-info p {
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+    color: #666;
+}
+
+.stat-info strong {
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.stars-section {
+    background-color: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 100%; /* Ensure it takes full width */
+    text-align: center;
+}
+
+.stars-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+#level-complete-screen .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 350px;
+    margin-top: auto; /* Push buttons towards the bottom */
+    margin-bottom: 20px;
+}
+
+.share-section {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    width: 100%;
+}
+
+.share-section p {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.share-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.share-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background-color: #f0f0f0;
+    color: #555;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.share-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.share-button:nth-child(1) {
+    background-color: #25D366;
+    color: white;
+}
+
+.share-button:nth-child(2) {
+    background-color: #1877F2;
+    color: white;
+}
+
+.share-button:nth-child(3) {
+    background-color: #1DA1F2;
+    color: white;
+}
+
+/* --- Responsive Adjustments for Narrow Screens --- */
+@media (max-width: 480px) {
+    #level-complete-screen .level-complete-container {
+        padding: 15px var(--padding-container) var(--navbar-height);
+    }
+    
+    .level-header .celebration-icon {
+        width: 60px;
+        height: 60px;
+    }
+    .level-header .celebration-icon i {
+        font-size: 2rem;
+    }
+    
+    .level-header h2 {
+        font-size: 1.5rem;
+    }
+    .level-header .congrats-message {
+        font-size: 1rem;
+    }
+    
+    .results-container {
+        padding: 15px;
+    }
+    .results-container h3 {
+        font-size: 1.1rem;
+    }
+    
+    .level-stats {
+        grid-template-columns: 1fr; /* Force single column */
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    .stat-box {
+        padding: 12px;
+    }
+    .stat-box i {
+        font-size: 1.3rem;
+    }
+    .stat-info p {
+        font-size: 0.85rem;
+    }
+    .stat-info strong {
+        font-size: 1rem;
+    }
+    
+    .stars-section {
+        padding: 12px;
+    }
+    .stars-section h4 {
+        font-size: 0.9rem;
+    }
+    .stars-container .star, 
+    .stars-container .crown {
+        font-size: 1.8rem;
+    }
+    
+    #level-complete-screen .button-group .button-cta,
+    #level-complete-screen .button-group .button-secondary {
+        font-size: 1rem; 
+        padding: 12px 20px;
+    }
+    
+    .share-button {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+}
+
+/* --- Button Styles --- */
 .button-cta {
     font-family: var(--font-family);
     background-color: var(--primary-color);
@@ -183,116 +715,72 @@ header h1 {
      transform: translateY(0);
 }
 
-/* --- Feedback Message --- */
-.feedback-message {
-    min-height: 30px; /* Prevent layout shift */
-    font-size: var(--font-size-feedback);
-    font-weight: 700;
-    margin-top: 15px; /* Adjusted margin */
-    margin-bottom: 10px; /* Adjusted margin */
+/* Button in quick-resume card */
+.quick-resume-card .button-cta {
+    background-color: white;
+    color: var(--primary-color);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin: 5px 0 0 0;
+    padding: 12px 25px;
+    width: auto;
+    align-self: flex-end;
 }
 
-.feedback-message.correct {
-    color: var(--correct-color);
-    animation: fadeInScaleUp 0.5s ease-out;
+.quick-resume-card .button-cta:hover {
+    background-color: #f5f5f5;
 }
 
-/* Style for correct but slow */
-.feedback-message.correct.slow {
-    color: #5a9a1a; /* A slightly darker/less vibrant green */
-    /* Keep the same animation or give it a different one? */
-    /* animation: fadeIn 0.5s ease; /* Example: simpler fade */
-}
-
-.feedback-message.incorrect {
-    color: var(--incorrect-color);
-    animation: shake 0.5s ease-in-out;
-}
-
-/* --- Stats & Progress --- */
-.stats-container {
-    background-color: var(--background-light);
-    padding: clamp(10px, 3vw, 15px) clamp(15px, 4vw, 20px); /* Reduced padding slightly */
-    border-radius: 15px;
-    margin-bottom: 20px; /* Adjusted margin */
-}
-
-/* Remove rules for elements that no longer exist */
-/* .stats-container h2 { ... } */
-.stats-container p {
-    margin-bottom: 8px;
-    font-size: var(--font-size-base);
-}
-/* #mastery-info { ... } */
-
-.progress-bar-container {
-    background-color: #e0e0e0;
+.button-secondary {
+    font-family: var(--font-family);
+    background-color: #f0f0f0;
+    color: #666;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
     border-radius: 50px;
-    height: 8px;
-    margin: 10px 0;
-    overflow: hidden;
-    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.progress-bar-inner {
-    background: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-    height: 100%;
-    width: 0%; /* Starts at 0 */
-    transition: width 0.3s ease-in-out;
+.button-secondary:hover {
+    background-color: #e5e5e5;
+    transform: translateY(-2px);
 }
 
-/* --- Footer --- */
-footer {
-    margin-top: 30px;
-    font-size: 0.9em;
-    color: #aaa;
-}
-
-/* --- Animations --- */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.button-secondary.small {
+    padding: 8px 15px;
+    font-size: 0.9rem;
 }
 
 /* --- Responsive Adjustments --- */
-@media (max-width: 600px) {
-     /* Keep specific small-screen overrides if needed, */
-     /* but many styles are now fluid */
-
-     /* Example: maybe reduce keypad max-width further */
-     .keypad-container {
-         max-width: 220px;
-     }
-
-    /* Remove fixed overrides that are now handled by clamp() */
-    /* html { font-size: 14px; } */
-    /* .container { padding: 20px; } */ /* Handled by --padding-container */
-    /* .problem-box { font-size: 2.2em; gap: 10px; } */ /* Handled by clamp() */
-    /* #answer-input { width: 80px; font-size: 0.9em; padding: 12px 8px; } */ /* Handled by clamp() */
-    /* .button-cta { padding: 12px 30px; font-size: 1.2em; } */ /* Handled by clamp() */
-
-    /* Keep specific structural adjustments if necessary */
-    #practice-level-title {
-        /* font-size: 1.5em; */ /* Handled by --font-size-h1 */
-        padding: 0 40px; /* Keep padding adjustment */
+@media (max-width: 400px) {
+    .quick-resume-card {
+        padding: 15px;
     }
-     #back-to-home-button {
-         /* padding: 6px 10px; */ /* Handled by clamp() */
-         /* font-size: 0.8em; */ /* Handled by clamp() */
-         /* Still needs positioning */
-         position: absolute;
-         top: 50%;
-         left: 0;
-         transform: translateY(-50%);
-     }
-     .button-cta.large {
-         /* padding: 15px 40px; */ /* Handled by clamp() */
-         /* font-size: 1.3em; */ /* Handled by clamp() */
-     }
-      /* .keypad-button { font-size: 1.5em; padding: 12px; } */ /* Handled by clamp() */
+    
+    .category-cards {
+        gap: 10px;
+    }
+    
+    .category-card {
+        padding: 15px 10px;
+    }
+    
+    .category-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .daily-challenge-card {
+        padding: 15px;
+    }
+    
+    .challenge-icon {
+        width: 40px;
+        height: 40px;
+    }
 }
-
-/* --- Additions to existing style.css --- */
 
 /* --- Screen Management --- */
 .screen {
@@ -367,34 +855,43 @@ footer {
      color: #888;
 }
 
-
 .button-cta.large {
     padding: clamp(15px, 3.5vw, 18px) clamp(40px, 8vw, 50px);
     font-size: clamp(1.3rem, 3vw + 0.5rem, 1.5rem);
 }
 
 /* --- Practice Screen Specific Styles --- */
+.practice-main {
+    padding: 0 var(--padding-container);
+    padding-bottom: calc(var(--keypad-height, 300px) + 20px); /* Update estimated height */
+}
+
 #practice-screen header {
+    padding: 15px var(--padding-container) 5px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
     position: relative;
+    gap: 15px;
 }
 
 #practice-level-title {
     font-size: 1.5rem;
     color: var(--primary-color);
-    margin-right: 10px;
-    margin-bottom: 0;
-    flex: 1;
+    margin: 0 auto 0 0;
+    font-weight: 700;
+    position: absolute;
+    left: 0;
+    right: 0;
     text-align: center;
+    pointer-events: none; /* Let clicks pass through to elements beneath */
+    z-index: 0; /* Place behind the back button */
 }
 
-#back-to-home-button {
+/* Position back button over the title but in a way that looks balanced */
+#back-to-home-button,
+#back-to-home-from-exercises-button {
+    z-index: 1;
     position: relative;
-    font-size: 0.9em;
-    padding: 8px 15px;
 }
 
 .stats-container #mastery-info {
@@ -459,40 +956,97 @@ h1, h2, strong, .button-cta, .button-secondary, .number-bubble, #answer-input {
 
 /* --- Keypad Styles --- */
 .keypad-container {
+    /* Fixed position styling */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 500px; /* Match container max-width */
+    margin: 0 auto; /* Center horizontally */
+    
+    /* Layout and Appearance */
     display: grid;
+    /* Adjust grid to accommodate submit button */
     grid-template-columns: repeat(3, 1fr);
-    gap: clamp(8px, 2vw, 10px);
-    max-width: 250px; /* Adjust as needed */
-    margin: 20px auto; /* Adjusted margin */
+    grid-template-rows: repeat(4, auto) 1fr; /* 4 rows for numbers/utils, 1 row for submit */
+    gap: clamp(8px, 1.5vw, 10px); 
+    padding: clamp(10px, 2vw, 15px);
+    background-color: #dbe2e8; 
+    border-top: 1px solid #c5cdd3;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 90; 
+    
+    /* Estimate height more accurately (4 number rows + 1 submit row + gaps + padding) */
+    /* This is an estimation, actual height depends on content/font size */
+    --keypad-height: calc(5 * clamp(12px, 3vw, 16px) * 2 + 4 * clamp(8px, 1.5vw, 10px) + 2 * clamp(10px, 2vw, 15px));
 }
 
 .keypad-button {
     font-family: var(--font-family);
     font-size: var(--font-size-keypad);
     font-weight: 700;
-    padding: clamp(10px, 3vw, 15px);
+    padding: clamp(12px, 3vw, 16px); 
     border: none;
-    border-radius: 12px;
-    background-color: #e8edf1; /* Light background */
-    color: var(--primary-color);
+    border-radius: 10px; 
+    background-color: #f8f9fa; 
+    color: #333;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.07);
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    -webkit-tap-highlight-color: transparent; 
+    user-select: none; 
 }
 
 .keypad-button:active {
-    background-color: #d5dce2;
-    transform: scale(0.95);
+    background-color: #e9ecef;
+    transform: scale(0.97);
+    box-shadow: none;
 }
 
 .keypad-button-utility {
-    background-color: #f5f7f9; /* Slightly different bg for utility keys */
-    color: var(--secondary-color);
-    font-weight: 700;
+    background-color: #e9ecef;
+    color: #555;
+    font-weight: 600;
 }
 
 .keypad-button-utility:active {
-    background-color: #e8edf1;
+    background-color: #dde1e4;
+}
+
+/* Styling for the submit button within the keypad */
+.keypad-submit-button {
+    grid-column: 1 / -1; /* Span all 3 columns */
+    grid-row: 5; /* Place in the 5th row */
+    
+    /* Inherit some styles but override where needed */
+    margin: 5px 0 0 0; /* Small top margin */
+    padding: clamp(14px, 3.5vw, 18px); /* Make it slightly taller */
+    font-size: var(--font-size-button-cta);
+    background-color: var(--primary-color); /* Use primary CTA color */
+    color: white;
+    border-radius: 10px;
+    width: 100%; /* Ensure full width within grid */
+    max-width: none; /* Remove previous max-width */
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+}
+
+.keypad-submit-button:hover {
+    background-color: #3a7bc8;
+    transform: translateY(-1px);
+}
+
+.keypad-submit-button:active {
+    transform: scale(0.98);
+    background-color: #3a7bc8;
+    box-shadow: 0 2px 10px rgba(74, 144, 226, 0.3);
+}
+
+/* Adjust practice main padding based on new keypad height */
+.practice-main {
+    padding: 0 var(--padding-container);
+    /* Recalculate padding-bottom */
+    padding-bottom: calc(var(--keypad-height, 300px) + 20px); /* Update estimated height */
 }
 
 /* --- Feedback Animations --- */
@@ -783,5 +1337,420 @@ h1, h2, strong, .button-cta, .button-secondary, .number-bubble, #answer-input {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+    }
+}
+
+/* --- Problem Area --- */
+.problem-container {
+    position: relative;
+    background-color: var(--background-light);
+    border-radius: 15px;
+    padding: var(--padding-problem);
+    margin: 20px 0;
+    overflow: hidden; /* Contain shapes if needed */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.problem-box {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(10px, 2vw, 15px); /* Spacing between elements */
+    font-size: var(--font-size-problem);
+    font-weight: 700;
+}
+
+.number-bubble {
+    background-color: var(--bubble-bg);
+    padding: clamp(8px, 2vw, 10px) clamp(15px, 4vw, 20px);
+    border-radius: 50px; /* Make it pill-shaped or circular */
+    min-width: clamp(60px, 15vw, 80px); /* Ensure size consistency */
+    display: inline-block;
+    box-shadow: 0 4px 10px var(--bubble-shadow);
+    color: var(--primary-color);
+    transition: transform 0.2s ease;
+}
+
+.number-bubble:hover {
+    transform: scale(1.05);
+}
+
+.operator {
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+#answer-input {
+    font-family: var(--font-family);
+    font-weight: 700;
+    font-size: var(--font-size-input); /* Use fluid size */
+    width: clamp(80px, 20vw, 100px); /* Adjust as needed */
+    padding: clamp(8px, 2vw, 10px);
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s ease;
+    box-shadow: 0 4px 10px var(--bubble-shadow);
+    background-color: white;
+}
+
+#answer-input:focus {
+    border-color: var(--secondary-color);
+}
+
+/* Hide number input spinners */
+#answer-input::-webkit-outer-spin-button,
+#answer-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#answer-input[type=number] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+/* Stats & Progress */
+.stats-container {
+    background-color: var(--background-light);
+    padding: clamp(10px, 3vw, 15px) clamp(15px, 4vw, 20px);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+.progress-bar-container {
+    background-color: #e0e0e0;
+    border-radius: 50px;
+    height: 8px;
+    margin: 10px 0;
+    overflow: hidden;
+    width: 100%;
+}
+
+.progress-bar-inner {
+    background: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    height: 100%;
+    width: 0%; /* Starts at 0 */
+    transition: width 0.3s ease-in-out;
+}
+
+/* Feedback Message */
+.feedback-message {
+    min-height: 30px; /* Prevent layout shift */
+    font-size: var(--font-size-feedback);
+    font-weight: 700;
+    margin-top: 15px; /* Adjusted margin */
+    margin-bottom: 10px; /* Adjusted margin */
+}
+
+.feedback-message.correct {
+    color: var(--correct-color);
+    animation: fadeInScaleUp 0.5s ease-out;
+}
+
+/* Style for correct but slow */
+.feedback-message.correct.slow {
+    color: #5a9a1a; /* A slightly darker/less vibrant green */
+}
+
+.feedback-message.incorrect {
+    color: var(--incorrect-color);
+    animation: shake 0.5s ease-in-out;
+}
+
+.time-feedback {
+    font-size: 0.9em;
+    color: #888;
+    min-height: 1.2em; /* Prevent layout jump */
+    margin-top: 5px;
+}
+
+.time-feedback.slow {
+    color: var(--incorrect-color);
+    font-weight: bold;
+}
+
+/* Back Button Improvements */
+#back-to-home-button,
+#back-to-home-from-exercises-button {
+    position: relative;
+    border-radius: 50px;
+    padding: 10px 15px;
+    background-color: rgba(240, 240, 240, 0.9);
+    color: var(--text-color);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    z-index: 1; /* Position over the centered title */
+}
+
+#back-to-home-button:hover,
+#back-to-home-from-exercises-button:hover {
+    background-color: rgba(220, 220, 220, 0.95);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+#back-to-home-button:active,
+#back-to-home-from-exercises-button:active {
+    transform: translateY(0);
+}
+
+#back-to-home-button i,
+#back-to-home-from-exercises-button i {
+    font-size: 0.9rem;
+    margin-right: 3px;
+}
+
+/* Adjust practice and exercises screen headers */
+#practice-screen header,
+#exercises-screen header {
+    padding: 15px var(--padding-container) 5px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 15px;
+}
+
+/* Centered title styling */
+#practice-level-title,
+#exercises-screen header h1 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin: 0 auto;
+    font-weight: 700;
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none; /* Let clicks pass through to elements beneath */
+    z-index: 0; /* Place behind the back button */
+}
+
+/* Adjust exercises screen header without back button */
+#exercises-screen header {
+    padding: 15px var(--padding-container) 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#exercises-screen header h1 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+    position: relative; /* Change from absolute to relative */
+    text-align: center;
+    z-index: 1;
+    pointer-events: auto; /* Make title interactive again */
+}
+
+/* --- Level Complete Modal --- */
+.level-complete-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.level-complete-modal-content {
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalSlideUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.level-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.level-header .celebration-icon {
+    background-color: rgba(245, 166, 35, 0.1);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+    animation: bounceIn 0.8s;
+}
+
+.level-header .celebration-icon i {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+}
+
+.level-header h2 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.level-header .congrats-message {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.results-container {
+    background-color: var(--background-light);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.results-container h3 {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.results-container h4 {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.level-stats {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.result-details {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.stars-section, 
+.level-progress-section {
+    background-color: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.modal-progress {
+    margin-top: 10px;
+}
+
+.modal-progress .progress-bar {
+    background-color: #e0e0e0;
+    margin-bottom: 8px;
+}
+
+#level-progress-fill {
+    background: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    transition: width 1.5s ease-in-out;
+}
+
+#level-progress-text {
+    font-size: 0.9rem;
+    color: #666;
+    display: block;
+    text-align: center;
+}
+
+.level-complete-screen .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.share-section {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.share-section p {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.share-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.share-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background-color: #f0f0f0;
+    color: #555;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.share-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.share-button:nth-child(1) {
+    background-color: #25D366;
+    color: white;
+}
+
+.share-button:nth-child(2) {
+    background-color: #1877F2;
+    color: white;
+}
+
+.share-button:nth-child(3) {
+    background-color: #1DA1F2;
+    color: white;
+}
+
+@keyframes modalSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
