@@ -166,7 +166,7 @@ function calculateAndSaveStars(levelKey, accuracy, avgTime) {
         return achievedStars; // Return the new star count
     } else {
         console.log(`Level ${levelKey}: Completed with ${achievedStars} stars (current record ${currentStars})`);
-        return -1; // Indicate no new record
+        return currentStars; // Return the current stars instead of -1
     }
 }
 
@@ -174,12 +174,12 @@ function calculateAndShowResults() {
     const sessionEndTime = performance.now();
     const totalTimeMs = sessionEndTime - state.sessionStartTime;
     const totalQuestions = state.sessionQuestionsAnswered; // Should be == sessionPairings.length
-    const accuracy = totalQuestions > 0 ? (state.sessionCorrectAnswers / totalQuestions) * 100 : 0;
+    const accuracy = totalQuestions > 0 ? state.sessionCorrectAnswers / totalQuestions : 0;
     const avgTimeSec = totalQuestions > 0 ? (totalTimeMs / 1000) / totalQuestions : 0;
 
     console.log(`Session Complete: ${state.sessionCorrectAnswers}/${totalQuestions} correct. Avg time: ${avgTimeSec.toFixed(2)}s`);
 
-    const newStars = calculateAndSaveStars(state.currentLevelKey, accuracy, avgTimeSec);
+    const newStars = calculateAndSaveStars(state.currentLevelKey, accuracy * 100, avgTimeSec);
 
     // Pass stats to the completion screen
     showLevelCompleteScreen(state.currentLevelKey, accuracy, avgTimeSec, newStars);

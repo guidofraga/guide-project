@@ -106,23 +106,290 @@ export const levels = {
          name: '+9',
          generatePairings: () => generateSpecificAddPairings(9, 1, 9),
          timeThreshold: DEFAULT_TIME_THRESHOLD_MS,
-         next: 'AMix1'
+         next: 'A10'
     },
-    'AMix1': {
-        stage: 'A',
-        name: 'Mistura (1-9)',
-        generatePairings: () => generateRandomRangePairings(1, 9, 1, 9, 30), // Generate 30 random pairs
-        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 1000, // Slightly more time for mixed
-        next: 'B1' // Transition to next stage
-    },
-    'B1': {
-         stage: 'B',
+    'A10': {
+         stage: 'A',
          name: '10 + n',
          generatePairings: () => generateSpecificAddPairings(10, 1, 9),
          timeThreshold: FASTER_TIME_THRESHOLD_MS,
-         next: 'B2' // Placeholder for next level in stage B
+         next: 'A11'
     },
-    // ... Add more levels for Stage B etc. ...
+    'A11': {
+        stage: 'A',
+        name: 'Teste (1-10)',
+        generatePairings: () => generateRandomRangePairings(1, 10, 1, 9, 40), // Generate 40 random pairs
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 1000, // Slightly more time for mixed
+        next: 'B1' // Transition directly to next stage
+    },
+    'B1': {
+        stage: 'B',
+        name: 'Dezenas + Unidades (sem "vai um")',
+        generatePairings: () => {
+            const pairings = [];
+            // For numbers from 10 to 19
+            for (let num = 10; num <= 19; num++) {
+                // For each potential second number (1-9)
+                for (let secondNum = 1; secondNum <= 9; secondNum++) {
+                    // Check if adding won't cause carrying (sum <= 19)
+                    if (num + secondNum <= 19) {
+                        pairings.push({ op1: num, op2: secondNum });
+                    }
+                }
+            }
+            return shuffleArray(pairings);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS,
+        next: 'B2'
+    },
+    'B2': {
+        stage: 'B',
+        name: 'Dezenas + Dezenas',
+        generatePairings: () => {
+            const pairings = [];
+            // Generate all combinations of multiples of 10
+            for (let tens1 = 1; tens1 <= 9; tens1++) {
+                for (let tens2 = 1; tens2 <= 9; tens2++) {
+                    pairings.push({ op1: tens1 * 10, op2: tens2 * 10 });
+                }
+            }
+            return shuffleArray(pairings);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS,
+        next: 'B3'
+    },
+    'B3': {
+        stage: 'B',
+        name: 'Dezenas + Dezenas (sem "vai um")',
+        generatePairings: () => {
+            const pairings = [];
+            // For two-digit numbers
+            for (let tens1 = 1; tens1 <= 9; tens1++) {
+                for (let units1 = 0; units1 <= 9; units1++) {
+                    const num1 = tens1 * 10 + units1;
+                    
+                    for (let tens2 = 1; tens2 <= 9; tens2++) {
+                        for (let units2 = 0; units2 <= 9; units2++) {
+                            const num2 = tens2 * 10 + units2;
+                            
+                            // Check if adding won't cause carrying in units place
+                            if (units1 + units2 <= 9 && tens1 + tens2 <= 9) {
+                                pairings.push({ op1: num1, op2: num2 });
+                            }
+                        }
+                    }
+                }
+            }
+            return shuffleArray(pairings);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 1000,
+        next: 'B4'
+    },
+    'B4': {
+        stage: 'B',
+        name: 'Dezenas (10-19) + Unidades (com "vai um")',
+        generatePairings: () => {
+            const pairings = [];
+            // For numbers from 10 to 19
+            for (let num = 10; num <= 19; num++) {
+                const units = num % 10;
+                // For each potential second number (1-9)
+                for (let secondNum = 1; secondNum <= 9; secondNum++) {
+                    // Check if adding WILL cause carrying (units + secondNum > 9)
+                    if (units + secondNum > 9) {
+                        pairings.push({ op1: num, op2: secondNum });
+                    }
+                }
+            }
+            return shuffleArray(pairings);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 500,
+        next: 'B5'
+    },
+    'B5': {
+        stage: 'B',
+        name: 'Dezenas (20-99) + Unidades (com "vai um")',
+        generatePairings: () => {
+            const pairings = [];
+            // For numbers from 20 to 99
+            for (let tens = 2; tens <= 9; tens++) {
+                for (let units = 0; units <= 9; units++) {
+                    const num = tens * 10 + units;
+                    
+                    // For each potential second number (1-9)
+                    for (let secondNum = 1; secondNum <= 9; secondNum++) {
+                        // Check if adding WILL cause carrying in units (sum > 9)
+                        // but won't cause hundreds to carry (tens + 1 <= 9)
+                        if (units + secondNum > 9 && tens + 1 <= 9) {
+                            pairings.push({ op1: num, op2: secondNum });
+                        }
+                    }
+                }
+            }
+            return shuffleArray(pairings);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 1000,
+        next: 'B6'
+    },
+    'B6': {
+        stage: 'B',
+        name: 'Dezenas Múltiplas + Dezenas Múltiplas (com "vai um")',
+        generatePairings: () => {
+            const pairings = [];
+            // Generate combinations of multiples of 10 that carry
+            for (let tens1 = 1; tens1 <= 9; tens1++) {
+                for (let tens2 = 1; tens2 <= 9; tens2++) {
+                    // Check if adding will cause carrying in tens place (sum >= 100)
+                    if (tens1 + tens2 >= 10) {
+                        pairings.push({ op1: tens1 * 10, op2: tens2 * 10 });
+                    }
+                }
+            }
+            return shuffleArray(pairings);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 500,
+        next: 'B7'
+    },
+    'B7': {
+        stage: 'B',
+        name: 'Dezenas (10-19) + Dezenas (10-99) (com "vai um" nas unidades)',
+        generatePairings: () => {
+            const pairings = [];
+            // For numbers from 10 to 19 (teens)
+            for (let num1 = 10; num1 <= 19; num1++) {
+                const units1 = num1 % 10;
+                
+                // For second number from 10 to 99
+                for (let tens2 = 1; tens2 <= 9; tens2++) {
+                    for (let units2 = 0; units2 <= 9; units2++) {
+                        const num2 = tens2 * 10 + units2;
+                        
+                        // Check if adding WILL cause units to carry (sum > 9)
+                        // but won't cause hundreds to carry (1 + tens2 + 1 <= 9)
+                        if (units1 + units2 > 9 && 1 + tens2 + 1 <= 9) {
+                            pairings.push({ op1: num1, op2: num2 });
+                        }
+                    }
+                }
+            }
+            return shuffleArray(pairings);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 1000,
+        next: 'B8'
+    },
+    'B8': {
+        stage: 'B',
+        name: 'Dezenas (20-99) + Dezenas (10-99) (com "vai um" nas unidades)',
+        generatePairings: () => {
+            const pairings = [];
+            // For first number from 20 to 99
+            for (let tens1 = 2; tens1 <= 9; tens1++) {
+                for (let units1 = 0; units1 <= 9; units1++) {
+                    const num1 = tens1 * 10 + units1;
+                    
+                    // For second number from 10 to 99
+                    for (let tens2 = 1; tens2 <= 9; tens2++) {
+                        for (let units2 = 0; units2 <= 9; units2++) {
+                            const num2 = tens2 * 10 + units2;
+                            
+                            // Check if adding WILL cause units to carry (sum > 9)
+                            // but won't cause hundreds to carry (tens1 + tens2 + 1 <= 9)
+                            if (units1 + units2 > 9 && tens1 + tens2 + 1 <= 9) {
+                                pairings.push({ op1: num1, op2: num2 });
+                            }
+                        }
+                    }
+                }
+            }
+            return shuffleArray(pairings);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 1500,
+        next: 'B9'
+    },
+    'B9': {
+        stage: 'B',
+        name: 'Dezenas + Dezenas (com "vai um" nas dezenas, sem "vai um" nas unidades)',
+        generatePairings: () => {
+            const pairings = [];
+            // For first number from 10 to 99
+            for (let tens1 = 1; tens1 <= 9; tens1++) {
+                for (let units1 = 0; units1 <= 9; units1++) {
+                    const num1 = tens1 * 10 + units1;
+                    
+                    // For second number from 10 to 99
+                    for (let tens2 = 1; tens2 <= 9; tens2++) {
+                        for (let units2 = 0; units2 <= 9; units2++) {
+                            const num2 = tens2 * 10 + units2;
+                            
+                            // Check if units won't carry (sum <= 9)
+                            // but tens will carry (tens1 + tens2 >= 10)
+                            if (units1 + units2 <= 9 && tens1 + tens2 >= 10) {
+                                pairings.push({ op1: num1, op2: num2 });
+                            }
+                        }
+                    }
+                }
+            }
+            return shuffleArray(pairings);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 1500,
+        next: 'B10'
+    },
+    'B10': {
+        stage: 'B',
+        name: 'Dezenas + Dezenas (com "vai um" em ambos)',
+        generatePairings: () => {
+            const pairings = [];
+            // For first number from 10 to 99
+            for (let tens1 = 1; tens1 <= 9; tens1++) {
+                for (let units1 = 0; units1 <= 9; units1++) {
+                    const num1 = tens1 * 10 + units1;
+                    
+                    // For second number from 10 to 99
+                    for (let tens2 = 1; tens2 <= 9; tens2++) {
+                        for (let units2 = 0; units2 <= 9; units2++) {
+                            const num2 = tens2 * 10 + units2;
+                            
+                            // Check if both units and tens will carry
+                            // units carry (units1 + units2 > 9)
+                            // tens carry with the carried 1 (tens1 + tens2 + 1 >= 10)
+                            if (units1 + units2 > 9 && tens1 + tens2 + 1 >= 10) {
+                                pairings.push({ op1: num1, op2: num2 });
+                            }
+                        }
+                    }
+                }
+            }
+            return shuffleArray(pairings);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 2000,
+        next: 'B11'
+    },
+    'B11': {
+        stage: 'B',
+        name: 'Teste (Dezenas - com e sem "vai um")',
+        generatePairings: () => {
+            const pairings = [];
+            
+            // Mixed problems covering all rules from Stage B
+            // For first number from 10 to 99
+            for (let num1 = 10; num1 <= 99; num1++) {
+                // For second number from 1 to 99
+                for (let num2 = 1; num2 <= 99; num2++) {
+                    // Skip cases where second number is 0 (covered in earlier levels)
+                    if (num2 === 0) continue;
+                    
+                    // Include in test set (will be sampled and shuffled)
+                    pairings.push({ op1: num1, op2: num2 });
+                }
+            }
+            
+            // Sample 40 random pairs to ensure a good distribution
+            return shuffleArray(pairings).slice(0, 40);
+        },
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 2000,
+        next: 'END'
+    },
     'END': { stage: null, name: 'Fim do Jogo!', generatePairings: () => [], timeThreshold: 0, next: null} // Sentinel level
 };
 

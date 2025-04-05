@@ -70,6 +70,10 @@ body {
     flex-direction: column;
     min-height: 100vh;
     padding-bottom: var(--navbar-height);
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    overflow-y: auto; /* Ensure scrolling works */
 }
 
 /* --- Header Styles --- */
@@ -399,6 +403,8 @@ header h1 {
 .tab-content {
     display: none;
     padding-bottom: 20px;
+    max-height: calc(100vh - 150px); /* Ensure content fits on screen */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .tab-content.active {
@@ -407,6 +413,8 @@ header h1 {
 
 .stage-selection-container {
     margin-bottom: 30px;
+    max-height: none; /* Remove any height limitation */
+    overflow: visible; /* Ensure content is visible */
 }
 
 /* Animations */
@@ -1218,7 +1226,7 @@ h1, h2, strong, .button-cta, .button-secondary, .number-bubble, #answer-input {
     padding: 0 20px; /* Start with horizontal padding only */
     background-color: #ffffff;
     /* Animation properties */
-    overflow: hidden;
+    overflow: visible; /* Changed from hidden to visible */
     max-height: 0;
     opacity: 0;
     transform: translateY(-10px);
@@ -1231,7 +1239,7 @@ h1, h2, strong, .button-cta, .button-secondary, .number-bubble, #answer-input {
 }
 
 .stage-accordion[open] > .level-grid-inner {
-    max-height: 1000px; /* Set to a sufficiently large height */
+    max-height: 5000px; /* Further increase from 2000px to 5000px to ensure all levels are visible */
     padding-top: 15px;
     padding-bottom: 20px;
     opacity: 1;
