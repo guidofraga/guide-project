@@ -26,8 +26,10 @@ if (profileButton && headerProfileIcon) {
 export const lastLevelPlayedEl = document.getElementById('last-level-played');
 export const overallProgressEl = document.getElementById('overall-progress');
 export const progressPercentageEl = document.getElementById('progress-percentage');
+export const contagemCategoryEl = document.getElementById('contagem-category');
 export const additionCategoryEl = document.getElementById('addition-category');
 export const subtractionCategoryEl = document.getElementById('subtraction-category');
+export const contagemProgressEl = document.getElementById('contagem-progress');
 export const additionProgressEl = document.getElementById('addition-progress');
 export const subtractionProgressEl = document.getElementById('subtraction-progress');
 
@@ -38,6 +40,7 @@ export const allExercisesButton = document.getElementById('all-exercises-button'
 // Exercises Screen Elements
 export const tabButtons = document.querySelectorAll('.tab-button');
 export const tabContents = document.querySelectorAll('.tab-content');
+export const contagemStagesContainer = document.getElementById('contagem-stages-container');
 export const additionStagesContainer = document.getElementById('addition-stages-container');
 export const subtractionStagesContainer = document.getElementById('subtraction-stages-container');
 

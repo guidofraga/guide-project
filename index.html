@@ -63,6 +63,19 @@
                 <div class="categories-section">
                     <h3>Categorias</h3>
                     <div class="category-cards">
+                        <div class="category-card" id="contagem-category">
+                            <div class="category-icon">
+                                <i class="fas fa-list-ol"></i>
+                            </div>
+                            <div class="category-info">
+                                <h3>Contagem</h3>
+                                <div class="category-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="contagem-progress" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="category-card" id="addition-category">
                             <div class="category-icon">
                                 <i class="fas fa-plus"></i>
@@ -162,11 +175,17 @@
         <main>
             <div class="tabs-container">
                 <div class="tabs-header">
-                    <button class="tab-button active" data-tab="addition">Adição</button>
+                    <button class="tab-button active" data-tab="contagem">Contagem</button>
+                    <button class="tab-button" data-tab="addition">Adição</button>
                     <button class="tab-button" data-tab="subtraction">Subtração</button>
                 </div>
                 <div class="tabs-content">
-                    <div id="addition-tab" class="tab-content active">
+                    <div id="contagem-tab" class="tab-content active">
+                        <div id="contagem-stages-container" class="stage-selection-container">
+                            <!-- Contagem accordions will be dynamically inserted here by ui.js -->
+                        </div>
+                    </div>
+                    <div id="addition-tab" class="tab-content">
                         <div id="addition-stages-container" class="stage-selection-container">
                             <!-- Addition accordions will be dynamically inserted here by ui.js -->
                         </div>
@@ -217,6 +236,9 @@
                     <span class="operator">=</span>      
                     <input type="number" id="answer-input" inputmode="numeric" placeholder="?" autocomplete="off" readonly>    
                 </div>
+                
+                <!-- This is where the Tabela grid will be placed -->
+                <div id="problem-area" class="problem-area"></div>
             </div>
 
             <div class="stats-container">

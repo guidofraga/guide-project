@@ -6,12 +6,29 @@ import {
 
 // --- Stage Definitions ---
 export const stages = {
+    'C': { name: 'Contagem', description: 'Exercícios de contagem e reconhecimento de números.' },
     'A': { name: 'Fundamentos da Adição', description: 'Dominando a adição com números de 1 a 9.' },
     'B': { name: 'Dezenas e Unidades', description: 'Adicionando dezenas e unidades simples.' },
     // Add more stages here as levels are created
 };
 
 // --- Generation Functions ---
+// New function for Tabela exercise number generation
+function generateRandomNumberSet(min, max, count) {
+    const numbers = [];
+    const used = new Set();
+    
+    while (numbers.length < count) {
+        const num = getRandomInt(min, max);
+        if (!used.has(num)) {
+            numbers.push(num);
+            used.add(num);
+        }
+    }
+    
+    return numbers;
+}
+
 function generateSpecificAddPairings(fixedOperand, rangeMin, rangeMax) {
     const pairings = [];
     for (let i = rangeMin; i <= rangeMax; i++) {
@@ -45,6 +62,96 @@ function generateSpecificAddPairings(fixedOperand, rangeMin, rangeMax) {
 // --- Level Definitions ---
 // Structure: key: { stage, name(short), generatePairings(), timeThreshold, next }
 export const levels = {
+    'C1': {
+        stage: 'C',
+        name: 'Tabela 1 (1-5)',
+        type: 'tabela',
+        numberRange: { min: 1, max: 5 },
+        hideNumbers: false,
+        timeThreshold: FASTER_TIME_THRESHOLD_MS,
+        next: 'C2'
+    },
+    'C2': {
+        stage: 'C',
+        name: 'Tabela 2 (1-5) - Números Escondidos',
+        type: 'tabela',
+        numberRange: { min: 1, max: 5 },
+        hideNumbers: true,
+        timeThreshold: FASTER_TIME_THRESHOLD_MS,
+        next: 'C3'
+    },
+    'C3': {
+        stage: 'C',
+        name: 'Tabela 3 (1-10)',
+        type: 'tabela',
+        numberRange: { min: 1, max: 10 },
+        hideNumbers: false,
+        timeThreshold: FASTER_TIME_THRESHOLD_MS,
+        next: 'C4'
+    },
+    'C4': {
+        stage: 'C',
+        name: 'Tabela 4 (1-10) - Números Escondidos',
+        type: 'tabela',
+        numberRange: { min: 1, max: 10 },
+        hideNumbers: true,
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS,
+        next: 'C5'
+    },
+    'C5': {
+        stage: 'C',
+        name: 'Tabela 5 (1-20)',
+        type: 'tabela',
+        numberRange: { min: 1, max: 20 },
+        hideNumbers: false,
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS,
+        next: 'C6'
+    },
+    'C6': {
+        stage: 'C',
+        name: 'Tabela 6 (1-20) - Números Escondidos',
+        type: 'tabela',
+        numberRange: { min: 1, max: 20 },
+        hideNumbers: true,
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS,
+        next: 'C7'
+    },
+    'C7': {
+        stage: 'C',
+        name: 'Tabela 7 (1-50)',
+        type: 'tabela',
+        numberRange: { min: 1, max: 50 },
+        hideNumbers: false,
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS,
+        next: 'C8'
+    },
+    'C8': {
+        stage: 'C',
+        name: 'Tabela 8 (1-50) - Números Escondidos',
+        type: 'tabela',
+        numberRange: { min: 1, max: 50 },
+        hideNumbers: true,
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 1000,
+        next: 'C9'
+    },
+    'C9': {
+        stage: 'C',
+        name: 'Tabela 9 (1-100)',
+        type: 'tabela',
+        numberRange: { min: 1, max: 100 },
+        hideNumbers: false,
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS,
+        next: 'C10'
+    },
+    'C10': {
+        stage: 'C',
+        name: 'Tabela 10 (1-100) - Números Escondidos',
+        type: 'tabela',
+        numberRange: { min: 1, max: 100 },
+        hideNumbers: true,
+        timeThreshold: DEFAULT_TIME_THRESHOLD_MS + 1000,
+        next: 'A1'
+    },
     'A1': {
         stage: 'A',
         name: '+1',

@@ -43,6 +43,9 @@ import {
     getNextLevelToPlay
 } from './core/gameLogic.js';
 
+// Expose checkAnswer globally for the Tabela exercise
+window.checkAnswer = checkAnswer;
+
 function initApp() {
     // Pass core logic functions to UI module
     setInitializeLevel(initializeLevel);

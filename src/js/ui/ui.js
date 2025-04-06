@@ -195,6 +195,10 @@ function calculateProgress() {
     let totalPossibleStars = 0;
     
     // Category-specific progress
+    let contagemLevels = 0;
+    let contagemStars = 0;
+    let contagemPossibleStars = 0;
+    
     let additionLevels = 0;
     let additionStars = 0;
     let additionPossibleStars = 0;
@@ -215,8 +219,15 @@ function calculateProgress() {
         totalPossibleStars += 4; // Max 4 stars possible per level
         totalCompletedStars += state.levelProgress[key] || 0;
         
-        // For now, all are addition levels in stages A-C
-        if (level.stage === 'A' || level.stage === 'B' || level.stage === 'C') {
+        // Contagem levels in stage C
+        if (level.stage === 'C') {
+            contagemLevels++;
+            contagemPossibleStars += 4;
+            contagemStars += state.levelProgress[key] || 0;
+        }
+        
+        // Addition levels in stages A-B
+        if (level.stage === 'A' || level.stage === 'B') {
             additionLevels++;
             additionPossibleStars += 4;
             additionStars += state.levelProgress[key] || 0;
@@ -234,6 +245,9 @@ function calculateProgress() {
     const totalProgressPercent = totalPossibleStars > 0 ? 
         Math.round((totalCompletedStars / totalPossibleStars) * 100) : 0;
     
+    const contagemProgressPercent = contagemPossibleStars > 0 ? 
+        Math.round((contagemStars / contagemPossibleStars) * 100) : 0;
+    
     const additionProgressPercent = additionPossibleStars > 0 ? 
         Math.round((additionStars / additionPossibleStars) * 100) : 0;
     
@@ -242,6 +256,7 @@ function calculateProgress() {
     
     return {
         total: totalProgressPercent,
+        contagem: contagemProgressPercent,
         addition: additionProgressPercent,
         subtraction: subtractionProgressPercent
     };
@@ -327,33 +342,68 @@ function updateHeaderAvatar() {
 // --- Update Specific Screens ---
 
 export function updateHomeScreen() {
-    console.log('updateHomeScreen called');
-
-    // Determine the next level to play
-    const nextLevelKey = getNextLevelToPlayFunc ? getNextLevelToPlayFunc() : state.currentLevelKey || 'A1';
-
-    // Update user info
-    dom.userNameEl.textContent = state.userName || 'Estudante';
-    dom.currentStreakEl.textContent = state.streak || 0; // Assuming streak is managed elsewhere or default 0
-    updateHeaderAvatar(); // Update the header avatar
-
+    // Generate a seed if none exists
+    if (!state.avatarSeed) {
+        state.avatarSeed = generateRandomSeed();
+        saveState();
+    }
+    
+    // Set user name
+    if (state.userName) {
+        dom.userNameEl.textContent = state.userName;
+    } else {
+        dom.userNameEl.textContent = 'Visitante';
+    }
+    
+    // Update streak
+    dom.currentStreakEl.textContent = state.currentStreak || 0;
+    
+    // Update the header avatar image
+    updateHeaderAvatar();
+    
+    // Find the next level to play
+    const nextLevelKey = getNextLevelToPlayFunc ? getNextLevelToPlayFunc() : 'A1';
+    
     // Update last level info & progress
     dom.lastLevelPlayedEl.textContent = state.currentLevelKey || nextLevelKey || 'A1';
 
     // Calculate progress percentages
     const progress = calculateProgress();
+    console.log("Progress calculation:", progress);
     dom.overallProgressEl.style.width = `${progress.total}%`;
     dom.progressPercentageEl.textContent = `${progress.total}% concluído`;
 
     // Update category progress
+    console.log("Updating category progress bars:", {
+        contagemEl: dom.contagemProgressEl,
+        additionEl: dom.additionProgressEl,
+        subtractionEl: dom.subtractionProgressEl
+    });
+    dom.contagemProgressEl.style.width = `${progress.contagem}%`;
     dom.additionProgressEl.style.width = `${progress.addition}%`;
     dom.subtractionProgressEl.style.width = `${progress.subtraction}%`;
 }
 
 export function updateExercisesScreen() {
-    // First load tab content
+    // Load tab content
+    updateContagemExercisesTab();
     updateAdditionExercisesTab();
     updateSubtractionExercisesTab();
+}
+
+function updateContagemExercisesTab() {
+    const container = dom.contagemStagesContainer;
+    if (!container) {
+        console.error("Contagem stages container not found!");
+        return;
+    }
+    container.innerHTML = ''; // Clear previous content
+    
+    // Filter for contagem stages (C)
+    const contagemStageKeys = Object.keys(stages).filter(key => 
+        ['C'].includes(key));
+    
+    populateStagesAccordions(container, contagemStageKeys);
 }
 
 function updateAdditionExercisesTab() {
@@ -364,9 +414,9 @@ function updateAdditionExercisesTab() {
     }
     container.innerHTML = ''; // Clear previous content
     
-    // Filter for addition stages (A, B, C)
+    // Filter for addition stages (A, B) - Corrected filter
     const additionStageKeys = Object.keys(stages).filter(key => 
-        ['A', 'B', 'C'].includes(key));
+        ['A', 'B'].includes(key)); // Removed 'C'
     
     populateStagesAccordions(container, additionStageKeys);
 }
@@ -400,6 +450,7 @@ function updateSubtractionExercisesTab() {
 }
 
 function populateStagesAccordions(container, stageKeys) {
+    console.log(`Populating accordions for stages: ${stageKeys.join(', ')} in container:`, container);
     // Group levels by stage
     const levelsByStage = {};
     Object.keys(levels).forEach(key => {
@@ -411,20 +462,25 @@ function populateStagesAccordions(container, stageKeys) {
         }
         levelsByStage[level.stage].push(key);
     });
+    console.log('Levels grouped by stage:', levelsByStage);
 
     // Generate HTML for each stage accordion
     stageKeys.forEach(stageKey => {
+        console.log(`Processing stage: ${stageKey}`);
         const stageInfo = stages[stageKey];
         const stageLevels = levelsByStage[stageKey] || [];
-        if (stageLevels.length === 0) return; // Don't show empty stages
+        console.log(`Found ${stageLevels.length} levels for stage ${stageKey}:`, stageLevels);
+        if (stageLevels.length === 0) {
+            console.log(`Skipping stage ${stageKey} as it has no levels.`);
+            return; // Don't show empty stages
+        }
 
         const stageElement = document.createElement('details');
         stageElement.className = 'stage-accordion';
 
         // Determine if this stage contains the next level to play
-        const nextLevelKey = getNextLevelToPlayFunc();
-        const isNextStage = stageLevels.includes(nextLevelKey);
-        if (isNextStage) {
+        const nextLevelKey = getNextLevelToPlayFunc ? getNextLevelToPlayFunc() : null;
+        if (nextLevelKey && stageLevels.includes(nextLevelKey)) {
              stageElement.open = true; // Open the accordion if it contains the next level
         }
 
@@ -514,8 +570,19 @@ export function showLevelCompleteScreen(results) {
     hideAllScreens();
     dom.levelCompleteScreen.classList.add('active');
     
+    // If results is a string (old format), convert to object
+    let resultsObj = results;
+    if (typeof results === 'string') {
+        resultsObj = {
+            levelKey: results,
+            accuracy: 0,
+            avgTime: 0,
+            stars: 0
+        };
+    }
+    
     // Save current state for history
-    const currentLevelKey = getCurrentLevelKey();
+    const currentLevelKey = resultsObj.levelKey || state.currentLevelKey;
     
     // Update sessionStorage
     sessionStorage.setItem('currentScreen', 'levelComplete');
@@ -523,13 +590,13 @@ export function showLevelCompleteScreen(results) {
     
     // Add to history
     history.pushState(
-        { screen: 'levelComplete', levelKey: currentLevelKey, results }, 
+        { screen: 'levelComplete', levelKey: currentLevelKey, results: resultsObj }, 
         'Level Complete', 
         '#levelComplete/' + currentLevelKey
     );
     
     // Update the UI with level completion results
-    updateLevelCompleteScreen(results);
+    updateLevelCompleteScreen(resultsObj);
 }
 
 // Setup tab functionality
@@ -556,6 +623,15 @@ export function setupTabNavigation() {
 // Setup UI event listeners
 export function setupUIEventListeners() {
     // Category cards
+    if (dom.contagemCategoryEl) {
+        dom.contagemCategoryEl.addEventListener('click', () => {
+            showExercisesScreen();
+            // Activate contagem tab
+            const contagemTab = document.querySelector('.tab-button[data-tab="contagem"]');
+            if (contagemTab) contagemTab.click();
+        });
+    }
+    
     if (dom.additionCategoryEl) {
         dom.additionCategoryEl.addEventListener('click', () => {
             showExercisesScreen();
@@ -732,36 +808,50 @@ function getCurrentLevelKey() {
 }
 
 // Function to update the level complete screen with results
-function updateLevelCompleteScreen(completedLevelKey, accuracy, avgTimeSec, newStars) {
-    // Check if we received an object with all parameters or individual parameters
-    if (typeof completedLevelKey === 'object') {
-        const results = completedLevelKey;
+function updateLevelCompleteScreen(results) {
+    // Handle different result formats
+    let levelKey, accuracy, avgTime, stars;
+    
+    if (typeof results === 'object') {
+        // New format as object
+        levelKey = results.levelKey;
         accuracy = results.accuracy;
-        avgTimeSec = results.avgTimeSec;
-        newStars = results.newStars;
-        completedLevelKey = results.completedLevelKey;
+        avgTime = results.avgTime;
+        stars = results.stars;
+    } else {
+        // Old format with separate parameters
+        levelKey = results;
+        accuracy = arguments[1] || 0;
+        avgTime = arguments[2] || 0;
+        stars = arguments[3] || 0;
     }
     
     // Trigger haptic feedback for level completion
     triggerHapticFeedback('LEVEL_COMPLETE');
 
     // Level details
-    dom.completedLevelNameEl.textContent = completedLevelKey;
-    dom.levelAccuracyStatEl.textContent = `${Math.round(accuracy * 100)}%`;
-    dom.levelAvgTimeStatEl.textContent = `${avgTimeSec.toFixed(1)}s`;
+    dom.completedLevelNameEl.textContent = levelKey;
+    
+    // Format accuracy as percentage
+    const accuracyValue = typeof accuracy === 'number' && accuracy <= 1 ? 
+        Math.round(accuracy * 100) : Math.round(accuracy);
+    dom.levelAccuracyStatEl.textContent = `${accuracyValue}%`;
+    
+    // Format time
+    dom.levelAvgTimeStatEl.textContent = `${avgTime.toFixed(1)}s`;
     
     // Setup stars with animation delay
-    dom.earnedStarsEl.innerHTML = getStarRating(newStars);
+    dom.earnedStarsEl.innerHTML = getStarRating(stars);
     
     // New stars message
-    if (newStars > 0) {
-        const previousStars = (state.levelProgress[completedLevelKey] || 0) - newStars;
+    if (stars > 0) {
+        const previousStars = (state.levelProgress[levelKey] || 0) - stars;
         
-        if (previousStars < newStars) {
-            if (newStars === 4) {
+        if (previousStars < stars) {
+            if (stars === 4) {
                 dom.levelNewStarsMessageEl.textContent = "Você conquistou a coroa! 👑";
             } else {
-                dom.levelNewStarsMessageEl.textContent = `Você conquistou ${newStars} ${newStars === 1 ? 'estrela' : 'estrelas'}!`;
+                dom.levelNewStarsMessageEl.textContent = `Você conquistou ${stars} ${stars === 1 ? 'estrela' : 'estrelas'}!`;
             }
         } else {
             dom.levelNewStarsMessageEl.textContent = "Bom trabalho!";
@@ -771,7 +861,7 @@ function updateLevelCompleteScreen(completedLevelKey, accuracy, avgTimeSec, newS
     }
     
     // Update next button logic and label
-    const nextLevelKey = levels[completedLevelKey].next;
+    const nextLevelKey = levels[levelKey]?.next;
     
     if (nextLevelKey === 'END') {
         dom.continueNextLevelButton.innerHTML = '<i class="fas fa-redo"></i> Recomeçar';
@@ -790,7 +880,7 @@ function updateLevelCompleteScreen(completedLevelKey, accuracy, avgTimeSec, newS
     }
     
     // Setup share buttons functionality
-    setupShareButtons(completedLevelKey, newStars);
+    setupShareButtons(levelKey, stars);
     
     // Reset the go home button handler
     dom.goHomeButton.onclick = showHomeScreen;

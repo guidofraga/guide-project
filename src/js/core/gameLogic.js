@@ -17,6 +17,7 @@ import {
     showPracticeScreen
 } from '../ui/ui.js';
 import * as dom from '../ui/domElements.js';
+import { initializeTabelaExercise, isTabelaComplete } from '../ui/tabelaUI.js';
 
 // Helper: Shuffle array ensuring no consecutive duplicates based on a key function
 function shuffleWithNoConsecutiveDuplicates(array, getKey) {
@@ -60,7 +61,22 @@ export function initializeLevel(levelKey) {
     }
     state.currentLevelKey = levelKey;
     const levelConfig = levels[state.currentLevelKey];
+    
+    // Clear the problem area to prevent UI elements from previous levels remaining visible
+    const problemArea = document.getElementById('problem-area');
+    if (problemArea) {
+        problemArea.innerHTML = '';
+    }
+    
+    // Handle Tabela exercises differently
+    if (levelConfig.type === 'tabela') {
+        state.sessionStartTime = performance.now();
+        state.wrongAnswers = 0;
+        state.tabelaComplete = false;
+        return true;
+    }
 
+    // For addition exercises, continue with existing logic
     // Generate unique pairs, duplicate, shuffle ensuring no immediate repeats
     const uniquePairings = levelConfig.generatePairings();
     if (!uniquePairings || uniquePairings.length === 0) {
@@ -95,6 +111,31 @@ export function initializeLevel(levelKey) {
 
 export function generateProblem() {
     resetProblemUI(); // Reset UI elements (feedback, input) first
+    
+    const levelConfig = levels[state.currentLevelKey];
+    
+    // Handle Tabela exercises
+    if (levelConfig.type === 'tabela') {
+        // Hide the standard addition UI elements and the keypad
+        dom.operand1El.parentElement.style.display = 'none';
+        dom.answerInput.parentElement.style.display = 'none';
+        dom.keypadContainer.style.display = 'none'; // Hide keypad
+        
+        // Initialize Tabela UI
+        initializeTabelaExercise();
+        return;
+    }
+    
+    // For standard addition exercises, restore UI and ensure problem area is clear
+    dom.operand1El.parentElement.style.display = 'flex';
+    dom.answerInput.parentElement.style.display = 'flex';
+    dom.keypadContainer.style.display = 'grid'; // Show keypad
+    
+    // Clear problem area for addition exercises
+    const problemArea = document.getElementById('problem-area');
+    if (problemArea) {
+        problemArea.innerHTML = '';
+    }
 
     if (state.sessionCurrentIndex >= state.sessionPairings.length) {
          console.error("generateProblem called but session index is out of bounds.");
@@ -116,6 +157,35 @@ export function generateProblem() {
 }
 
 export function checkAnswer() {
+    const levelConfig = levels[state.currentLevelKey];
+    
+    // Special handling for Tabela exercises
+    if (levelConfig.type === 'tabela') {
+        // Check if the Tabela exercise is complete
+        if (isTabelaComplete()) {
+            const sessionEndTime = performance.now();
+            const totalTimeMs = sessionEndTime - state.sessionStartTime;
+            const totalSeconds = totalTimeMs / 1000;
+            
+            // Calculate accuracy based on wrong attempts
+            const totalNumbers = levelConfig.numberRange.max - levelConfig.numberRange.min + 1;
+            const accuracy = Math.max(0, 100 - (state.wrongAnswers / totalNumbers * 100));
+            
+            // Calculate stars based on time and accuracy
+            const achievedStars = calculateAndSaveStars(state.currentLevelKey, accuracy, totalSeconds / totalNumbers);
+            
+            // Show level complete screen
+            showLevelCompleteScreen({
+                levelKey: state.currentLevelKey,
+                accuracy: accuracy,
+                avgTime: totalSeconds / totalNumbers,
+                stars: achievedStars
+            });
+        }
+        return;
+    }
+    
+    // Original addition exercise logic
     const questionEndTime = performance.now();
     const userAnswer = parseInt(dom.answerInput.value, 10);
 
@@ -181,8 +251,13 @@ function calculateAndShowResults() {
 
     const newStars = calculateAndSaveStars(state.currentLevelKey, accuracy * 100, avgTimeSec);
 
-    // Pass stats to the completion screen
-    showLevelCompleteScreen(state.currentLevelKey, accuracy, avgTimeSec, newStars);
+    // Pass stats to the completion screen using the new object format
+    showLevelCompleteScreen({
+        levelKey: state.currentLevelKey,
+        accuracy: accuracy * 100, // Convert to percentage
+        avgTime: avgTimeSec,
+        stars: newStars
+    });
 }
 
 // NEW function to determine the next level to play
