@@ -283,8 +283,17 @@ export function updateHomeScreen() {
 // Update the avatar in the home screen header
 function updateHeaderAvatar() {
     if (dom.profileButton && dom.headerProfileIcon && dom.headerProfileImage) {
+        // Set the avatar image source
         dom.headerProfileImage.src = getAvatarUrl(state.avatarSeed);
         dom.headerProfileImage.alt = `Avatar for ${state.userName}`;
+        
+        // Make sure all styles are applied (in case they're overridden)
+        dom.headerProfileImage.style.width = '45px';
+        dom.headerProfileImage.style.height = '45px';
+        dom.headerProfileImage.style.borderRadius = '50%';
+        dom.headerProfileImage.style.border = '2px solid var(--primary-color)';
+        dom.headerProfileImage.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+        
         // Replace the icon with the image if it hasn't been replaced yet
         if (dom.profileButton.contains(dom.headerProfileIcon)) {
             dom.profileButton.replaceChild(dom.headerProfileImage, dom.headerProfileIcon);

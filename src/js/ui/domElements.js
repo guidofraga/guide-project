@@ -16,8 +16,8 @@ export const profileButton = document.getElementById('profile-button');
 export const headerProfileIcon = profileButton ? profileButton.querySelector('i') : null; // Icon inside link
 export const headerProfileImage = document.createElement('img'); // Create an img element for avatar
 if (profileButton && headerProfileIcon) {
-    headerProfileImage.style.width = '30px'; // Adjust size as needed
-    headerProfileImage.style.height = '30px';
+    headerProfileImage.style.width = '45px'; // Increased from 30px
+    headerProfileImage.style.height = '45px'; // Increased from 30px
     headerProfileImage.style.borderRadius = '50%';
     headerProfileImage.style.verticalAlign = 'middle'; // Align with text
     // profileButton.replaceChild(headerProfileImage, headerProfileIcon); // Replace icon with image initially

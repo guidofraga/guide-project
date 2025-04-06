@@ -29,6 +29,17 @@
     --padding-problem: clamp(20px, 5vw, 40px);
 }
 
+/* Prevent touch-based zooming */
+html, body {
+    touch-action: pan-x pan-y;
+    -ms-touch-action: pan-x pan-y;
+    -webkit-touch-callout: none; /* Prevent callout to copy image, etc when tap to hold */
+    -webkit-user-select: none;   /* Prevent selection when tap to hold */
+    -moz-user-select: none;      /* Prevent selection */
+    -ms-user-select: none;       /* Prevent selection */
+    user-select: none;           /* Prevent selection */
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -119,15 +130,30 @@ header h1 {
     color: var(--secondary-color);
 }
 
+.profile-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+}
+
 .profile-link a {
     color: var(--primary-color);
-    font-size: 2rem;
+    font-size: 2.2rem; /* Increased from 2rem to match the larger avatar */
     text-decoration: none;
     transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .profile-link a:hover {
     transform: scale(1.1);
+}
+
+.profile-link img {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* --- Main Content --- */
