@@ -249,9 +249,79 @@ function calculateProgress() {
 
 // --- Avatar URL Generation ---
 function getAvatarUrl(seed) {
-    // Using DiceBear 'micah' style. Others: https://www.dicebear.com/styles/
-    // We keep the background colors for visual variety.
-    return `https://api.dicebear.com/8.x/micah/svg?seed=${encodeURIComponent(seed)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffdfbf,ffd5dc`;
+    // Generate a consistent background color for this avatar
+    // We'll use the seed to deterministically select a background color
+    const backgroundOptions = ['b6e3f4', 'c0aede', 'd1d4f9', 'ffdfbf', 'ffd5dc'];
+    
+    // Simple hash function to consistently pick a color for a given seed
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const bgIndex = Math.abs(hash) % backgroundOptions.length;
+    const bgColor = backgroundOptions[bgIndex];
+    
+    // Return both the URL and the background color
+    return {
+        url: `https://api.dicebear.com/8.x/micah/svg?seed=${encodeURIComponent(seed)}&backgroundColor=${bgColor}`,
+        bgColor: bgColor
+    };
+}
+
+// Function to darken a hex color for the border
+function darkenColor(hex, percent = 30) {
+    // Convert hex to RGB
+    let r = parseInt(hex.substring(0, 2), 16);
+    let g = parseInt(hex.substring(2, 4), 16);
+    let b = parseInt(hex.substring(4, 6), 16);
+    
+    // Darken each component
+    r = Math.floor(r * (100 - percent) / 100);
+    g = Math.floor(g * (100 - percent) / 100);
+    b = Math.floor(b * (100 - percent) / 100);
+    
+    // Convert back to hex
+    return (
+        (r < 16 ? '0' : '') + r.toString(16) +
+        (g < 16 ? '0' : '') + g.toString(16) +
+        (b < 16 ? '0' : '') + b.toString(16)
+    );
+}
+
+// Update the avatar in the home screen header
+function updateHeaderAvatar() {
+    if (dom.profileButton && dom.headerProfileIcon && dom.headerProfileImage) {
+        // Get the avatar data with URL and color
+        const avatarData = getAvatarUrl(state.avatarSeed);
+        
+        // Create a new image object to preload the avatar
+        const img = new Image();
+        
+        // Set up event handlers
+        img.onload = function() {
+            // Once the image is loaded, update the avatar and border
+            dom.headerProfileImage.src = avatarData.url;
+            dom.headerProfileImage.alt = `Avatar for ${state.userName}`;
+            
+            // Get the darker version of the background color for the border
+            const borderColor = darkenColor(avatarData.bgColor);
+            
+            // Apply all styles
+            dom.headerProfileImage.style.width = '45px';
+            dom.headerProfileImage.style.height = '45px';
+            dom.headerProfileImage.style.borderRadius = '50%';
+            dom.headerProfileImage.style.border = `2px solid #${borderColor}`;
+            dom.headerProfileImage.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+            
+            // Replace the icon with the image if it hasn't been replaced yet
+            if (dom.profileButton.contains(dom.headerProfileIcon)) {
+                dom.profileButton.replaceChild(dom.headerProfileImage, dom.headerProfileIcon);
+            }
+        };
+        
+        // Set the source to trigger loading
+        img.src = avatarData.url;
+    }
 }
 
 // --- Update Specific Screens ---
@@ -278,27 +348,6 @@ export function updateHomeScreen() {
     // Update category progress
     dom.additionProgressEl.style.width = `${progress.addition}%`;
     dom.subtractionProgressEl.style.width = `${progress.subtraction}%`;
-}
-
-// Update the avatar in the home screen header
-function updateHeaderAvatar() {
-    if (dom.profileButton && dom.headerProfileIcon && dom.headerProfileImage) {
-        // Set the avatar image source
-        dom.headerProfileImage.src = getAvatarUrl(state.avatarSeed);
-        dom.headerProfileImage.alt = `Avatar for ${state.userName}`;
-        
-        // Make sure all styles are applied (in case they're overridden)
-        dom.headerProfileImage.style.width = '45px';
-        dom.headerProfileImage.style.height = '45px';
-        dom.headerProfileImage.style.borderRadius = '50%';
-        dom.headerProfileImage.style.border = '2px solid var(--primary-color)';
-        dom.headerProfileImage.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-        
-        // Replace the icon with the image if it hasn't been replaced yet
-        if (dom.profileButton.contains(dom.headerProfileIcon)) {
-            dom.profileButton.replaceChild(dom.headerProfileImage, dom.headerProfileIcon);
-        }
-    }
 }
 
 export function updateExercisesScreen() {
@@ -642,9 +691,30 @@ export function handleKeypadInput(value) {
 function updateProfileScreen() {
     if (!dom.profileScreen.classList.contains('active')) return; // Only update if visible
 
+    // Set the user name
     dom.nicknameInput.value = state.userName;
-    dom.profileAvatarPreview.src = getAvatarUrl(state.avatarSeed);
-    dom.profileAvatarPreview.alt = `Current avatar for ${state.userName}`;
+    
+    // Get the avatar data with URL and color
+    const avatarData = getAvatarUrl(state.avatarSeed);
+    
+    // Create a new image object to preload the avatar
+    const img = new Image();
+    
+    // Set up event handlers
+    img.onload = function() {
+        // Once the image is loaded, update the avatar and border
+        dom.profileAvatarPreview.src = avatarData.url;
+        dom.profileAvatarPreview.alt = `Current avatar for ${state.userName}`;
+        
+        // Get the darker version of the background color for the border
+        const borderColor = darkenColor(avatarData.bgColor);
+        
+        // Apply border style matching the avatar background
+        dom.profileAvatarPreview.style.border = `3px solid #${borderColor}`;
+    };
+    
+    // Set the source to trigger loading
+    img.src = avatarData.url;
 }
 
 // Initial UI Setup (called from main.js)
