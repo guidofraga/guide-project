@@ -152,7 +152,7 @@ header h1 {
 }
 
 .profile-link img {
-    border: 2px solid var(--primary-color);
+    border: 2px solid transparent; /* Remove hardcoded color to allow JS to set it */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -1810,7 +1810,7 @@ h1, h2, strong, .button-cta, .button-secondary, .number-bubble, #answer-input {
     height: 120px;
     border-radius: 50%;
     background-color: #e0e0e0; /* Placeholder background */
-    border: 3px solid var(--primary-color);
+    border: 3px solid transparent; /* Remove hardcoded color to allow JS to set it */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
