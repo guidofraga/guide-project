@@ -2,7 +2,7 @@
     "name": "Guide - Aprendendo Matemática", 
     "short_name": "Guide",             
     "description": "Aprenda matemática passo a passo!",
-    "start_url": ".",                 
+    "start_url": "/?source=pwa",                 
     "scope": "/",                     
     "display": "standalone",          
     "background_color": "#eef2f7",   

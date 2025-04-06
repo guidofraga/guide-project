@@ -51,6 +51,48 @@ function initApp() {
     setGetNextLevelToPlay(getNextLevelToPlay);
 
     // --- Event Listeners ---
+
+    // Prevent pinch zooming
+    document.addEventListener('touchmove', function(event) {
+        // If more than one touch (pinching gesture)
+        if (event.touches.length > 1) {
+            event.preventDefault();
+        }
+    }, { passive: false }); // passive: false is important to allow preventDefault
+
+    // Setup popstate event listener to handle back button
+    window.addEventListener('popstate', (event) => {
+        if (event.state) {
+            switch (event.state.screen) {
+                case 'home':
+                    showHomeScreen(false); // Pass false to avoid pushing new state
+                    break;
+                case 'exercises':
+                    showExercisesScreen(false); // Pass false to avoid pushing new state
+                    break;
+                case 'practice':
+                    // If we have level info, restore it
+                    if (event.state.levelKey) {
+                        if (initializeLevel(event.state.levelKey)) {
+                            showPracticeScreen(false); // Pass false to avoid pushing new state
+                        } else {
+                            showHomeScreen(false);
+                        }
+                    } else {
+                        showHomeScreen(false);
+                    }
+                    break;
+                case 'profile':
+                    showProfileScreen(false); // Pass false to avoid pushing new state
+                    break;
+                default:
+                    showHomeScreen(false);
+            }
+        } else {
+            showHomeScreen(false);
+        }
+    });
+
     dom.startPracticeButton.addEventListener('click', () => {
         console.log('Start Practice button clicked');
         console.log('Current state:', JSON.stringify(state));
@@ -92,7 +134,32 @@ function initApp() {
 
     // --- Initialisation ---
     loadState();
-    showHomeScreen();
+    
+    // Check if we have a saved screen state and restore it, otherwise show home
+    const lastScreen = sessionStorage.getItem('currentScreen');
+    const lastLevelKey = sessionStorage.getItem('currentLevelKey');
+    
+    if (lastScreen) {
+        switch (lastScreen) {
+            case 'exercises':
+                showExercisesScreen();
+                break;
+            case 'practice':
+                if (lastLevelKey && initializeLevel(lastLevelKey)) {
+                    showPracticeScreen();
+                } else {
+                    showHomeScreen();
+                }
+                break;
+            case 'profile':
+                showProfileScreen();
+                break;
+            default:
+                showHomeScreen();
+        }
+    } else {
+        showHomeScreen();
+    }
 
     // --- Service Worker Registration ---
     if ('serviceWorker' in navigator) {
@@ -109,7 +176,14 @@ function initApp() {
                     newWorker.addEventListener('statechange', () => {
                         // If the new service worker is installed, refresh the page to activate it
                         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            console.log('New content is available; refreshing page to activate...');
+                            console.log('New content is available; need to reload page...');
+                            
+                            // Save current screen state before reloading
+                            const currentScreen = sessionStorage.getItem('currentScreen') || 'home';
+                            
+                            // Store a flag indicating we're reloading due to update
+                            sessionStorage.setItem('reloadingForUpdate', 'true');
+                            
                             window.location.reload();
                         }
                     });
@@ -134,6 +208,13 @@ function initApp() {
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             if (!refreshing) {
                 refreshing = true;
+                
+                // Save current screen state before reloading
+                const currentScreen = sessionStorage.getItem('currentScreen') || 'home';
+                
+                // Store a flag indicating we're reloading due to update
+                sessionStorage.setItem('reloadingForUpdate', 'true');
+                
                 window.location.reload();
             }
         });

@@ -38,28 +38,49 @@ function hideAllScreens() {
     dom.profileScreen.classList.remove('active'); // Hide profile screen
 }
 
-export function showHomeScreen() {
+export function showHomeScreen(pushState = true) {
     hideAllScreens();
     dom.homeScreen.classList.add('active');
     updateHomeScreen();
     updateBottomNavActive('home');
+    
+    // Update sessionStorage and history state
+    sessionStorage.setItem('currentScreen', 'home');
+    
+    if (pushState) {
+        history.pushState({ screen: 'home' }, 'Home', '#home');
+    }
 }
 
-export function showExercisesScreen() {
+export function showExercisesScreen(pushState = true) {
     hideAllScreens();
     dom.exercisesScreen.classList.add('active');
     updateExercisesScreen();
     updateBottomNavActive('exercises');
+    
+    // Update sessionStorage and history state
+    sessionStorage.setItem('currentScreen', 'exercises');
+    
+    if (pushState) {
+        history.pushState({ screen: 'exercises' }, 'Exercises', '#exercises');
+    }
 }
 
-export function showProfileScreen() {
+export function showProfileScreen(pushState = true) {
     hideAllScreens();
     dom.profileScreen.classList.add('active');
     updateProfileScreen();
     // Maybe no bottom nav active state here?
+    
+    // Update sessionStorage and history state
+    sessionStorage.setItem('currentScreen', 'profile');
+    
+    if (pushState) {
+        history.pushState({ screen: 'profile' }, 'Profile', '#profile');
+    }
 }
 
-export function showPracticeScreen() {
+export function showPracticeScreen(pushState = true) {
     // Ensure the level is properly initialized before showing
     if (!levels[state.currentLevelKey] || state.currentLevelKey === 'END') {
         if (!initializeLevelFunc('A1')) return; // Start from A1 if END or invalid
@@ -75,6 +96,21 @@ export function showPracticeScreen() {
     
     // Show practice screen
     dom.practiceScreen.classList.add('active');
+    
+    // Get the current level key for history state
+    const currentLevelKey = getCurrentLevelKey();
+    
+    // Update sessionStorage and history state
+    sessionStorage.setItem('currentScreen', 'practice');
+    sessionStorage.setItem('currentLevelKey', currentLevelKey);
+    
+    if (pushState) {
+        history.pushState(
+            { screen: 'practice', levelKey: currentLevelKey }, 
+            'Practice Level ' + currentLevelKey, 
+            '#practice/' + currentLevelKey
+        );
+    }
     
     // Generate a new problem to start the practice session
     generateProblemFunc();
@@ -416,63 +452,26 @@ export function showFeedback(feedbackText, feedbackClass, timeText, timeClass) {
 }
 
 // Shows level complete screen with results
-export function showLevelCompleteScreen(completedLevelKey, accuracy, avgTimeSec, newStars) {
-    // First, make the screen visible
+export function showLevelCompleteScreen(results) {
     hideAllScreens();
     dom.levelCompleteScreen.classList.add('active');
     
-    // Trigger haptic feedback for level completion
-    triggerHapticFeedback('LEVEL_COMPLETE');
-
-    // Level details
-    dom.completedLevelNameEl.textContent = completedLevelKey;
-    dom.levelAccuracyStatEl.textContent = `${Math.round(accuracy * 100)}%`;
-    dom.levelAvgTimeStatEl.textContent = `${avgTimeSec.toFixed(1)}s`;
+    // Save current state for history
+    const currentLevelKey = getCurrentLevelKey();
     
-    // Setup stars with animation delay
-    dom.earnedStarsEl.innerHTML = getStarRating(newStars);
+    // Update sessionStorage
+    sessionStorage.setItem('currentScreen', 'levelComplete');
+    sessionStorage.setItem('currentLevelKey', currentLevelKey);
     
-    // New stars message
-    if (newStars > 0) {
-        const previousStars = (state.levelProgress[completedLevelKey] || 0) - newStars;
-        
-        if (previousStars < newStars) {
-            if (newStars === 4) {
-                dom.levelNewStarsMessageEl.textContent = "Você conquistou a coroa! 👑";
-            } else {
-                dom.levelNewStarsMessageEl.textContent = `Você conquistou ${newStars} ${newStars === 1 ? 'estrela' : 'estrelas'}!`;
-            }
-        } else {
-            dom.levelNewStarsMessageEl.textContent = "Bom trabalho!";
-        }
-    } else {
-        dom.levelNewStarsMessageEl.textContent = "Continue praticando para ganhar estrelas!";
-    }
+    // Add to history
+    history.pushState(
+        { screen: 'levelComplete', levelKey: currentLevelKey, results }, 
+        'Level Complete', 
+        '#levelComplete/' + currentLevelKey
+    );
     
-    // Update next button logic and label
-    const nextLevelKey = levels[completedLevelKey].next;
-    
-    if (nextLevelKey === 'END') {
-        dom.continueNextLevelButton.innerHTML = '<i class="fas fa-redo"></i> Recomeçar';
-        dom.continueNextLevelButton.onclick = () => {
-            if (startNextLevelFunc('A1')) {
-                showPracticeScreen();
-            }
-        };
-    } else {
-        dom.continueNextLevelButton.innerHTML = '<i class="fas fa-forward"></i> Próximo Nível';
-        dom.continueNextLevelButton.onclick = () => {
-            if (startNextLevelFunc(nextLevelKey)) {
-                showPracticeScreen();
-            }
-        };
-    }
-    
-    // Setup share buttons functionality
-    setupShareButtons(completedLevelKey, newStars);
-    
-    // Reset the go home button handler
-    dom.goHomeButton.onclick = showHomeScreen;
+    // Update the UI with level completion results
+    updateLevelCompleteScreen(results);
 }
 
 // Setup tab functionality
@@ -643,4 +642,77 @@ function updateProfileScreen() {
 export function initializeUI() {
     updateHomeScreen(); // Initial update of home screen on load
     setupUIEventListeners();
+}
+
+// Helper function to get current level key from state
+function getCurrentLevelKey() {
+    // Import state from the correct module if not directly accessible
+    return window.state && window.state.currentLevelKey ? 
+           window.state.currentLevelKey : 
+           (sessionStorage.getItem('currentLevelKey') || 'A1');
+}
+
+// Function to update the level complete screen with results
+function updateLevelCompleteScreen(completedLevelKey, accuracy, avgTimeSec, newStars) {
+    // Check if we received an object with all parameters or individual parameters
+    if (typeof completedLevelKey === 'object') {
+        const results = completedLevelKey;
+        accuracy = results.accuracy;
+        avgTimeSec = results.avgTimeSec;
+        newStars = results.newStars;
+        completedLevelKey = results.completedLevelKey;
+    }
+    
+    // Trigger haptic feedback for level completion
+    triggerHapticFeedback('LEVEL_COMPLETE');
+
+    // Level details
+    dom.completedLevelNameEl.textContent = completedLevelKey;
+    dom.levelAccuracyStatEl.textContent = `${Math.round(accuracy * 100)}%`;
+    dom.levelAvgTimeStatEl.textContent = `${avgTimeSec.toFixed(1)}s`;
+    
+    // Setup stars with animation delay
+    dom.earnedStarsEl.innerHTML = getStarRating(newStars);
+    
+    // New stars message
+    if (newStars > 0) {
+        const previousStars = (state.levelProgress[completedLevelKey] || 0) - newStars;
+        
+        if (previousStars < newStars) {
+            if (newStars === 4) {
+                dom.levelNewStarsMessageEl.textContent = "Você conquistou a coroa! 👑";
+            } else {
+                dom.levelNewStarsMessageEl.textContent = `Você conquistou ${newStars} ${newStars === 1 ? 'estrela' : 'estrelas'}!`;
+            }
+        } else {
+            dom.levelNewStarsMessageEl.textContent = "Bom trabalho!";
+        }
+    } else {
+        dom.levelNewStarsMessageEl.textContent = "Continue praticando para ganhar estrelas!";
+    }
+    
+    // Update next button logic and label
+    const nextLevelKey = levels[completedLevelKey].next;
+    
+    if (nextLevelKey === 'END') {
+        dom.continueNextLevelButton.innerHTML = '<i class="fas fa-redo"></i> Recomeçar';
+        dom.continueNextLevelButton.onclick = () => {
+            if (startNextLevelFunc('A1')) {
+                showPracticeScreen();
+            }
+        };
+    } else {
+        dom.continueNextLevelButton.innerHTML = '<i class="fas fa-forward"></i> Próximo Nível';
+        dom.continueNextLevelButton.onclick = () => {
+            if (startNextLevelFunc(nextLevelKey)) {
+                showPracticeScreen();
+            }
+        };
+    }
+    
+    // Setup share buttons functionality
+    setupShareButtons(completedLevelKey, newStars);
+    
+    // Reset the go home button handler
+    dom.goHomeButton.onclick = showHomeScreen;
 } 

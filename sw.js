@@ -97,6 +97,39 @@ self.addEventListener('fetch', event => {
   
   // Only handle requests from our origin
   if (requestUrl.origin === self.location.origin) {
+    // Special handling for navigation requests (URLs with hash fragments)
+    if (event.request.mode === 'navigate' || 
+        (event.request.method === 'GET' && 
+         event.request.headers.get('accept').includes('text/html'))) {
+      
+      event.respondWith(
+        fetch(event.request)
+          .then(response => {
+            // Clone the response to use it and cache it
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME)
+              .then(cache => {
+                cache.put(event.request, responseToCache);
+              });
+            
+            return response;
+          })
+          .catch(() => {
+            // If network fails, try to serve from cache
+            return caches.match(event.request)
+              .then(cachedResponse => {
+                if (cachedResponse) {
+                  return cachedResponse;
+                }
+                
+                // If no exact match in cache, serve index.html
+                return caches.match('./index.html');
+              });
+          })
+      );
+      return; // End processing this request
+    }
+    
     // For HTML and JS files: Network-first, fallback to cache
     if (isDynamicAsset(event.request.url)) {
       event.respondWith(
@@ -136,7 +169,7 @@ self.addEventListener('fetch', event => {
               });
           })
       );
-    } 
+    }
     // For static assets: Cache-first, fallback to network
     else {
       event.respondWith(
