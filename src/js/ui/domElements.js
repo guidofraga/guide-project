@@ -13,6 +13,16 @@ export const backToHomeButton = document.getElementById('back-to-home-button');
 export const userNameEl = document.getElementById('user-name');
 export const currentStreakEl = document.getElementById('current-streak');
 export const profileButton = document.getElementById('profile-button');
+export const headerProfileIcon = profileButton ? profileButton.querySelector('i') : null; // Icon inside link
+export const headerProfileImage = document.createElement('img'); // Create an img element for avatar
+if (profileButton && headerProfileIcon) {
+    headerProfileImage.style.width = '30px'; // Adjust size as needed
+    headerProfileImage.style.height = '30px';
+    headerProfileImage.style.borderRadius = '50%';
+    headerProfileImage.style.verticalAlign = 'middle'; // Align with text
+    // profileButton.replaceChild(headerProfileImage, headerProfileIcon); // Replace icon with image initially
+    // We will replace it dynamically in ui.js based on loaded state
+}
 export const lastLevelPlayedEl = document.getElementById('last-level-played');
 export const overallProgressEl = document.getElementById('overall-progress');
 export const progressPercentageEl = document.getElementById('progress-percentage');
@@ -52,3 +62,16 @@ export const earnedStarsEl = document.getElementById('earned-stars');
 export const levelNewStarsMessageEl = document.getElementById('level-new-stars-message');
 export const continueNextLevelButton = document.getElementById('continue-next-level-button');
 export const goHomeButton = document.getElementById('go-home-button');
+
+// New Screen
+export const profileScreen = document.getElementById('profile-screen');
+export const continueButton = document.getElementById('continue-button');
+export const returnHomeButton = document.getElementById('return-home-button');
+export const shareButtons = document.querySelectorAll('.share-button');
+
+// --- Profile Screen Elements (New) ---
+export const backToHomeFromProfileButton = document.getElementById('back-to-home-from-profile');
+export const profileAvatarPreview = document.getElementById('profile-avatar-preview');
+export const randomizeAvatarButton = document.getElementById('randomize-avatar-button');
+export const nicknameInput = document.getElementById('nickname-input');
+export const saveProfileButton = document.getElementById('save-profile-button');

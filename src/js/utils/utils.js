@@ -65,4 +65,11 @@ export function throttle(func, limit) {
             setTimeout(() => inThrottle = false, limit);
         }
     }
-} 
+}
+
+// Function to generate a simple random string (for avatar seeds)
+export function generateRandomSeed() {
+    return Math.random().toString(36).substring(2, 15);
+}
+
+// Export all functions 

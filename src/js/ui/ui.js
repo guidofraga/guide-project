@@ -1,6 +1,7 @@
 import state from '../core/state.js';
 import { levels, stages } from '../core/levels.js';
-import { getPairingKey, triggerHapticFeedback } from '../utils/utils.js'; // Needed for updatePracticeUI calculation
+import { saveState } from '../core/state.js';
+import { getPairingKey, triggerHapticFeedback, generateRandomSeed } from '../utils/utils.js'; // Needed for updatePracticeUI calculation and profile avatar
 import * as dom from './domElements.js';
 import { QUESTIONS_PER_SESSION } from '../config/constants.js'; // Remove REQUIRED_CORRECT_FAST_ANSWERS
 
@@ -34,6 +35,7 @@ function hideAllScreens() {
     dom.practiceScreen.classList.remove('active');
     dom.levelCompleteScreen.classList.remove('active');
     dom.exercisesScreen.classList.remove('active');
+    dom.profileScreen.classList.remove('active'); // Hide profile screen
 }
 
 export function showHomeScreen() {
@@ -48,6 +50,13 @@ export function showExercisesScreen() {
     dom.exercisesScreen.classList.add('active');
     updateExercisesScreen();
     updateBottomNavActive('exercises');
+}
+
+export function showProfileScreen() {
+    hideAllScreens();
+    dom.profileScreen.classList.add('active');
+    updateProfileScreen();
+    // Maybe no bottom nav active state here?
 }
 
 export function showPracticeScreen() {
@@ -202,27 +211,49 @@ function calculateProgress() {
     };
 }
 
+// --- Avatar URL Generation ---
+function getAvatarUrl(seed) {
+    // Using DiceBear 'micah' style. Others: https://www.dicebear.com/styles/
+    // We keep the background colors for visual variety.
+    return `https://api.dicebear.com/8.x/micah/svg?seed=${encodeURIComponent(seed)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffdfbf,ffd5dc`;
+}
+
+// --- Update Specific Screens ---
+
 export function updateHomeScreen() {
     console.log('updateHomeScreen called');
 
     // Determine the next level to play
-    const nextLevelKey = getNextLevelToPlayFunc();
-    
+    const nextLevelKey = getNextLevelToPlayFunc ? getNextLevelToPlayFunc() : state.currentLevelKey || 'A1';
+
     // Update user info
     dom.userNameEl.textContent = state.userName || 'Estudante';
-    dom.currentStreakEl.textContent = state.streak || 0;
-    
+    dom.currentStreakEl.textContent = state.streak || 0; // Assuming streak is managed elsewhere or default 0
+    updateHeaderAvatar(); // Update the header avatar
+
     // Update last level info & progress
     dom.lastLevelPlayedEl.textContent = state.currentLevelKey || nextLevelKey || 'A1';
-    
+
     // Calculate progress percentages
     const progress = calculateProgress();
     dom.overallProgressEl.style.width = `${progress.total}%`;
     dom.progressPercentageEl.textContent = `${progress.total}% concluído`;
-    
+
     // Update category progress
     dom.additionProgressEl.style.width = `${progress.addition}%`;
     dom.subtractionProgressEl.style.width = `${progress.subtraction}%`;
+}
+
+// Update the avatar in the home screen header
+function updateHeaderAvatar() {
+    if (dom.profileButton && dom.headerProfileIcon && dom.headerProfileImage) {
+        dom.headerProfileImage.src = getAvatarUrl(state.avatarSeed);
+        dom.headerProfileImage.alt = `Avatar for ${state.userName}`;
+        // Replace the icon with the image if it hasn't been replaced yet
+        if (dom.profileButton.contains(dom.headerProfileIcon)) {
+            dom.profileButton.replaceChild(dom.headerProfileImage, dom.headerProfileIcon);
+        }
+    }
 }
 
 export function updateExercisesScreen() {
@@ -490,18 +521,25 @@ export function setupUIEventListeners() {
     dom.bottomNavItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            const target = item.getAttribute('href').replace('#', '');
-            
-            if (target === 'home') {
-                showHomeScreen();
-            } else if (target === 'exercises') {
-                showExercisesScreen();
-            } else if (target === 'stats') {
-                // Placeholder for future statistics screen
-                alert('Estatísticas em breve!');
-            } else if (target === 'settings') {
-                // Placeholder for future settings screen
-                alert('Configurações em breve!');
+            const targetScreen = item.getAttribute('href').substring(1); // Remove '#'
+            switch (targetScreen) {
+                case 'home':
+                    showHomeScreen();
+                    break;
+                case 'exercises':
+                    showExercisesScreen();
+                    break;
+                // Add cases for stats and settings when they are implemented
+                 case 'stats':
+                    console.log('Stats screen clicked - Not implemented');
+                    // showStatsScreen(); // To be implemented
+                    break;
+                 case 'settings':
+                     console.log('Settings screen clicked - Not implemented');
+                    // showSettingsScreen(); // To be implemented
+                    break;
+                default:
+                    showHomeScreen(); // Fallback
             }
         });
     });
@@ -516,6 +554,37 @@ export function setupUIEventListeners() {
     
     // Setup tab navigation
     setupTabNavigation();
+
+    // --- New Profile Screen Listeners ---
+    dom.profileButton?.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent hash change if it's an <a>
+        showProfileScreen();
+    });
+
+    dom.backToHomeFromProfileButton?.addEventListener('click', showHomeScreen);
+
+    dom.randomizeAvatarButton?.addEventListener('click', () => {
+        state.avatarSeed = generateRandomSeed(); // Update state directly
+        updateProfileScreen(); // Update the preview
+        // No need to save state here, only on explicit save action
+    });
+
+    dom.saveProfileButton?.addEventListener('click', () => {
+        const newNickname = dom.nicknameInput.value.trim();
+        if (newNickname) {
+            state.userName = newNickname;
+        } else {
+            // Optionally reset to default or keep old name if empty
+            state.userName = 'Estudante'; // Reset to default if empty
+            dom.nicknameInput.value = state.userName; // Update input field
+        }
+        // Avatar seed is already updated in state by the randomize button
+
+        saveState(); // Save the updated nickname and avatar seed
+        updateHomeScreen(); // Update home screen with new name/avatar
+        showHomeScreen(); // Go back home after saving
+        // Optionally show a success message/toast
+    });
 }
 
 // Setup share functionality
@@ -559,4 +628,19 @@ export function handleKeypadInput(value) {
             dom.answerInput.value += value;
         }
     }
+}
+
+// Function to update the Profile Screen UI with current state
+function updateProfileScreen() {
+    if (!dom.profileScreen.classList.contains('active')) return; // Only update if visible
+
+    dom.nicknameInput.value = state.userName;
+    dom.profileAvatarPreview.src = getAvatarUrl(state.avatarSeed);
+    dom.profileAvatarPreview.alt = `Current avatar for ${state.userName}`;
+}
+
+// Initial UI Setup (called from main.js)
+export function initializeUI() {
+    updateHomeScreen(); // Initial update of home screen on load
+    setupUIEventListeners();
 } 

@@ -5,6 +5,8 @@
 const state = {
     currentLevelKey: 'A1',      // The level the user is currently on or was last playing
     levelProgress: {},          // Stores highest stars achieved per level key, e.g., {'A1': 2, 'A2': 0}
+    userName: 'Estudante',      // User's chosen nickname
+    avatarSeed: 'defaultSeed',  // Seed for the DiceBear avatar
 
     // Current session/practice state (volatile, reset on level start)
     sessionPairings: [],        // The list of 20 questions for the current session
@@ -23,6 +25,8 @@ const state = {
 export function saveState() {
     localStorage.setItem('guiaMathCurrentLevelKey', state.currentLevelKey);
     localStorage.setItem('guiaLevelProgress', JSON.stringify(state.levelProgress));
+    localStorage.setItem('guiaUserName', state.userName);
+    localStorage.setItem('guiaAvatarSeed', state.avatarSeed);
     // We don't save volatile session state
     // Remove old items if they exist
     localStorage.removeItem('guiaCompletedLevels');
@@ -33,8 +37,12 @@ export function saveState() {
 export function loadState() {
     const savedLevelKey = localStorage.getItem('guiaMathCurrentLevelKey');
     const savedLevelProgress = localStorage.getItem('guiaLevelProgress');
+    const savedUserName = localStorage.getItem('guiaUserName');
+    const savedAvatarSeed = localStorage.getItem('guiaAvatarSeed');
 
     state.levelProgress = savedLevelProgress ? JSON.parse(savedLevelProgress) : {};
+    state.userName = savedUserName || 'Estudante'; // Default name
+    state.avatarSeed = savedAvatarSeed || generateRandomSeed(); // Default or random seed
 
     // Restore current level key if valid, otherwise default to A1
     // We no longer need to pass initializeLevelFunc here, as level isn't started on load,
@@ -54,6 +62,11 @@ export function loadState() {
     state.currentQuestionPair = null;
     state.currentCorrectAnswer = 0;
     state.questionStartTime = 0;
+}
+
+// Helper function to generate a random seed for the avatar
+function generateRandomSeed() {
+    return Math.random().toString(36).substring(2, 15);
 }
 
 // Export the state object directly
